@@ -93,6 +93,7 @@ const portfolioData = {
                 "Editor_Work/Thumbnails/DOC-20251128-WA0015.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0017.jpg",
                 "Editor_Work/Thumbnails/IMG_20251018_202111.png",
+                "Editor_Work/Thumbnails/IMG_20251129_200049.png",
                 "Editor_Work/Thumbnails/Picsart_24-10-15_11-17-31-129.jpg",
                 "Editor_Work/Thumbnails/Picsart_24-10-21_18-13-12-181.jpg",
                 "Editor_Work/Thumbnails/Picsart_24-11-15_09-18-32-125.jpg",
