@@ -76,7 +76,7 @@ const portfolioData = {
                 "Editor_Work/Banners/Freelance.png",
                 "Editor_Work/Banners/IMG_20251104_131418.png",
                 "Editor_Work/Banners/Picsart_25-11-03_13-30-55-420.jpg",
-                "Editor_Work/Banners/Royal_Fortune_Casino_Banner.jpg"
+                "Editor_Work/Banners/Royal_Fortune_Casino_Banner.jpg",
                 "Editor_Work/Banners/TopGaming_Banner.jpg"
             ],
             thumbnails: [
