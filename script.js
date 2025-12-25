@@ -81,6 +81,7 @@ const portfolioData = {
             ],
             thumbnails: [
                 "Editor_Work/Thumbnails/Marry_Christmas_Wizzer_Thmbnl.jpg",
+                "Editor_Work/Thumbnails/Picsart_25-02-17_14-27-52-884.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0001.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0002.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0003.jpg",
@@ -100,7 +101,6 @@ const portfolioData = {
                 "Editor_Work/Thumbnails/Picsart_24-10-21_18-13-12-181.jpg",
                 "Editor_Work/Thumbnails/Picsart_24-11-15_09-18-32-125.jpg",
                 "Editor_Work/Thumbnails/Picsart_24-11-16_18-29-37-429.jpg",
-                "Editor_Work/Thumbnails/Picsart_25-02-17_14-27-52-884.jpg",
                 "Editor_Work/Thumbnails/Picsart_25-07-13_15-00-06-268.jpg",
                 "Editor_Work/Thumbnails/Picsart_25-07-13_15-31-00-535.jpg",
                 "Editor_Work/Thumbnails/Picsart_25-09-12_18-24-17-781.jpg",
