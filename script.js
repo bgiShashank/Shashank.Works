@@ -80,6 +80,7 @@ const portfolioData = {
                 "Editor_Work/Banners/TopGaming_Banner.jpg"
             ],
             thumbnails: [
+                "Editor_Work/Thumbnails/Marry_Christmas_Wizzer_Thmbnl.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0001.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0002.jpg",
                 "Editor_Work/Thumbnails/DOC-20251128-WA0003.jpg",
