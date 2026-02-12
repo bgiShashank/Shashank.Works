@@ -120,6 +120,7 @@ const profileWeb = document.getElementById('profile-web');
 const profileVideo = document.getElementById('profile-video');
 const heroTitle = document.getElementById('hero-title');
 const heroSubtitle = document.getElementById('hero-subtitle');
+const heroActions = document.getElementById('hero-actions');
 const aboutContent = document.getElementById('about-content');
 const skillsContainer = document.getElementById('skills-container');
 const projectsContainer = document.getElementById('projects-container');
@@ -362,6 +363,18 @@ function updateContent(portfolioType) {
         heroTitle.classList.remove('hero-title-contrast');
         updateHeroTitleWrap();
         projectsTitle.textContent = portfolioType === 'web' ? 'Projects' : 'My Work';
+
+        // Update hero actions (buttons under subtitle) for each portfolio type
+        if (heroActions) {
+            if (portfolioType === 'web') {
+                heroActions.innerHTML = `<a href="Shashank_Resume.pdf" target="_blank" rel="noopener noreferrer" class="contact-btn hero-action-btn">Resume</a>`;
+            } else {
+                heroActions.innerHTML = `
+                    <a href="https://drive.google.com/drive/folders/1y4DlAmqN2YmXofMwYt_-uYcokwjaMr0E?usp=sharing" target="_blank" rel="noopener noreferrer" class="contact-btn hero-action-btn">Portfolio</a>
+                    <a href="Editor_Shashank_Resume.pdf" target="_blank" rel="noopener noreferrer" class="contact-btn hero-action-btn">Resume</a>
+                `;
+            }
+        }
         
         // Update skills
         skillsContainer.innerHTML = '';

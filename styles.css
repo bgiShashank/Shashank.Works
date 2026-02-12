@@ -293,6 +293,18 @@ input:checked + .slider:before {
     animation: fadeInUp 0.8s ease 0.2s both;
 }
 
+.hero-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.hero-action-btn {
+    padding-inline: 26px;
+}
+
 .hero-description {
     font-size: 1.1rem;
     line-height: 1.8;
