@@ -47,9 +47,20 @@ body::before {
     z-index: 0;
 }
 
+/* Unique signature name above toggle */
+.shashank-signature-name {
+    font-family: 'Dharma Gothic E', 'Boomerang Script', 'Vivaldi', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-transform: none;
+    letter-spacing: 0.18em;
+    text-align: center;
+    color: var(--text-light);
+}
+
 /* Toggle Switch Container */
 .toggle-container {
-    margin-top: 30px;
+    margin-top: 0;
     z-index: 1000;
     background: linear-gradient(135deg, rgba(18, 53, 92, 0.4) 0%, rgba(10, 31, 58, 0.3) 100%);
     backdrop-filter: blur(15px);
