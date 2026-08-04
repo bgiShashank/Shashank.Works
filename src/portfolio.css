@@ -751,7 +751,7 @@ input:checked + .slider:before {
     aspect-ratio: 16 / 9;
 }
 
-/* Videos section gallery */
+/* Regular videos section (16:9) */
 .videos-section .work-gallery {
     grid-template-columns: repeat(2, 1fr);
 }
@@ -768,42 +768,45 @@ input:checked + .slider:before {
     border-color: rgba(74, 143, 199, 0.4);
 }
 
+/* YouTube Shorts gallery — portrait 9:16, 4 columns on desktop */
+.shorts-gallery {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.shorts-gallery .work-item,
+.shorts-item {
+    aspect-ratio: 9 / 16 !important;
+    cursor: default;
+}
+
+@media (max-width: 1024px) {
+    .shorts-gallery {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .shorts-gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .videos-section .work-gallery {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .shorts-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
 .video-iframe {
     width: 100%;
     height: 100%;
     border: none;
     display: block;
-}
-
-/* Unmute overlay button on active video cards */
-.video-mute-btn {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    background: rgba(10, 20, 40, 0.82);
-    color: #a8d5ff;
-    border: 1px solid rgba(74, 143, 199, 0.5);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 0.8rem;
-    font-family: inherit;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-    transition: background var(--transition-speed) ease,
-                border-color var(--transition-speed) ease,
-                transform var(--transition-speed) ease;
-    white-space: nowrap;
-    pointer-events: all;
-}
-
-.video-mute-btn:hover {
-    background: rgba(45, 107, 160, 0.9);
-    border-color: rgba(168, 213, 255, 0.8);
-    transform: translateX(-50%) scale(1.05);
-    color: #fff;
 }
 
 /* Video category groups */
@@ -834,12 +837,6 @@ input:checked + .slider:before {
     background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
 }
 
-@media (max-width: 768px) {
-    .videos-section .work-gallery {
-        grid-template-columns: 1fr;
-    }
-}
-
 .work-item {
     background: linear-gradient(135deg, rgba(18, 53, 92, 0.4) 0%, rgba(10, 31, 58, 0.3) 100%);
     backdrop-filter: blur(15px);
@@ -851,6 +848,7 @@ input:checked + .slider:before {
                 0 0 15px rgba(45, 107, 160, 0.2);
     cursor: pointer;
     aspect-ratio: 1;
+    position: relative;
 }
 
 .work-item:hover {
@@ -1091,8 +1089,7 @@ html {
         gap: 10px;
     }
 
-    .thumbnails-section .work-gallery,
-    .videos-section .work-gallery {
+    .thumbnails-section .work-gallery {
         grid-template-columns: 1fr;
     }
 
@@ -1180,15 +1177,4 @@ html {
 
     .lightbox-prev { left: -15px; }
     .lightbox-next { right: -15px; }
-}
-
-/* Fade transition for content switch */
-.content-fade-out {
-    opacity: 0 !important;
-    transition: opacity 0.2s ease;
-}
-
-.content-fade-in {
-    opacity: 1 !important;
-    transition: opacity 0.2s ease 0.05s;
 }

@@ -116,42 +116,41 @@ const portfolioData = {
         `${GITHUB_RAW}/Editor_Work/Thumbnails/Picsart_25-11-11_15-49-07-211.jpg`,
         `${GITHUB_RAW}/Editor_Work/Thumbnails/SAVE_20241203_134210.jpg`,
       ],
+      // YouTube video categories
+      // isShort: true  → 9:16 vertical player (YouTube Shorts)
+      // isShort: false → 16:9 horizontal player (regular YouTube)
       videoCategories: [
         {
           name: 'Edits & Concept Shorts',
+          isShort: true,
           ids: [
-            '13XXD_qezgsQ1Y1AOsFN8x0aVSJacvVve', // Best_Edit_Short. Rawana V1
-            '1JdGQh1gmKDZAAorTnJafM4gFcl4IAL_a', // Science of Discipline
-            '1TygLXRSRcVawkcJH5k-EK2dYi_Rx8ekW', // Shashank_VPN_Test
-            '12j4C_42xuDXhb_Xf7p1qQuoafLtCMSOG', // sample edit
+            'RCLVTqISFG4',
+            'tuqR9ex2TRM',
+            'ACYIr9roZpU',
+            'LgLTZFCo5uM',
+            'MKBacqSfGB4',
+            '9qeoM2OAy9Y',
+            'WHOBO4K7HGU',
+            'KnwdLdw6jW8',
+            'oDyl_mqVEKA',
+            '3sVzGlPYe4g',
           ],
         },
         {
           name: 'Commercial & Promotional',
+          isShort: false,
           ids: [
-            '1hnHXYoQ-PyaXIuKvDdad56En2ygZlv9q', // Trading promotional 3
-            '1uFLOBQPGB5VUHZWImTiAKuJ1zfPNIvHS', // Why Rebloom doesn't Give Discounts
-            '1jwlTUfqd0M0aLdyjGhi4WkU4RwoznxD-', // Ingredients vs Formulation
+            'cFlr5yehrZA',
+            'nHv1w0gQtCE',
+            'MxmkDS_Zu1s',
           ],
         },
         {
           name: 'Challenge & Entertainment Vlogs',
+          isShort: false,
           ids: [
-            '1ONE8hnYCRJ0OG5bBh6xLzvieM9iBag-r', // I SURVIVED 24 HOUR At BUS STAND
-            '1jgxiJlZZxnX4xRhFqxkRSVU6XLWRjFUi', // BUSTING 24 MYTHS IN 24 HOURS
-            '1qC80IEoVDmAkGxkWYynl6epfnPFme2r0', // Facing Dangerous Fears Of Life
-            '13JkMRdc4MEqG82HmL-DNtzDLxUw_ZXv3', // I Tried Most WEIRD FOOD Combinations
-          ],
-        },
-        {
-          name: 'Raw Clips & Revisions',
-          ids: [
-            '1ZuBzfwl3yUrlKyAEVjUXZ8U3YG_GFcsn', // 1.mp4
-            '15UOtzNBWBLXJcH4w0sQhNY-xc7MAl4Ss', // 2.mp4
-            '12weEvWJXsC0WCoPGvQ7eJexHRle73HOt', // (revision file)
-            '1VMRy-iL6tQS00UjaLLQk3pEHRlSbAYBt', // (revision file)
-            '1rf5Fe46GFyL8SClfXfykS19hiVJxNiqu', // 3.mp4
-            '1JFF87snQKSRdUGVCBwCETfqgxloGYkZ9', // 4.mp4
+            '5lVBUFWSCuE',
+            'th4etMIl9ac',
           ],
         },
       ],
@@ -226,64 +225,52 @@ function Lightbox({
 }
 
 // ---------- VideoCard -------------------------------------------------------
+// • YouTube embed — autoplays muted (browser requirement for autoplay)
 // • Thumbnail shown when card is off-screen (< 30% visible)
-// • Drive iframe mounted (and autoplays) when card is ≥ 30% visible
-// • Iframe fully UNMOUNTED when card drops below 30% — this is the only
-//   reliable way to stop a cross-origin Drive iframe from playing in the
-//   background; display:none/visibility:hidden do NOT pause Drive audio
-// • 🔇 overlay lets the user interact with Drive's own speaker control
-//   without reloading the iframe (no restart on unmute)
+// • iframe mounted & autoplays when card is ≥ 30% visible
+// • iframe fully UNMOUNTED when card scrolls out — stops audio reliably
+// • isShort: true → 9:16 portrait aspect ratio (YouTube Shorts)
+// • isShort: false → 16:9 landscape aspect ratio (regular videos)
 // ---------------------------------------------------------------------------
-function VideoCard({ fileId }: { fileId: string }) {
-  const [active,  setActive]  = useState(false);  // iframe mounted ↔ unmounted
-  const [unmuted, setUnmuted] = useState(false);  // hides the 🔇 overlay
+function VideoCard({ videoId, isShort = false }: { videoId: string; isShort?: boolean }) {
+  const [active, setActive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const thumbnailUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w640-h360`;
-  const embedUrl     = `https://drive.google.com/file/d/${fileId}/preview?autoplay=1`;
+  // YouTube thumbnails: mqdefault (320×180) works for both regular and Shorts
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+  // autoplay=1 + mute=1: required by browsers; rel=0: no related videos after playback
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1`;
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const ratio = entry.intersectionRatio;
-        if (ratio >= 0.3) {
+        if (entry.intersectionRatio >= 0.3) {
           setActive(true);
         } else {
-          // Drop below 30% → fully unmount iframe → audio/video truly stops
           setActive(false);
-          setUnmuted(false); // reset overlay for next time card enters view
         }
       },
       { threshold: [0, 0.3] }
     );
     observer.observe(container);
     return () => observer.disconnect();
-  }, [fileId]);
+  }, [videoId]);
 
   return (
-    <div className="work-item video-work-item" ref={containerRef}>
+    <div
+      className={`work-item video-work-item${isShort ? ' shorts-item' : ''}`}
+      ref={containerRef}
+    >
       {active ? (
-        <>
-          <iframe
-            src={embedUrl}
-            className="video-iframe"
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-            title={`Video ${fileId}`}
-          />
-          {!unmuted && (
-            <button
-              className="video-mute-btn"
-              onClick={() => setUnmuted(true)}
-              title="Tap to interact with Drive player audio"
-              aria-label="Dismiss mute overlay"
-            >
-              🔇 Tap to unmute
-            </button>
-          )}
-        </>
+        <iframe
+          src={embedUrl}
+          className="video-iframe"
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+          allowFullScreen
+          title={`Video ${videoId}`}
+        />
       ) : (
         <img
           src={thumbnailUrl}
@@ -508,7 +495,6 @@ export default function App() {
   const data = portfolioData[currentPortfolio];
 
   // Build contact links
-  const contact = currentPortfolio === 'web' ? portfolioData.web.contact : portfolioData.video.contact;
   const webContact = portfolioData.web.contact;
   const videoContact = portfolioData.video.contact;
   const mergedContact = {
@@ -787,9 +773,9 @@ export default function App() {
                   {portfolioData.video.work.videoCategories.map((cat) => (
                     <div key={cat.name} className="video-category">
                       <h4 className="video-category-title">{cat.name}</h4>
-                      <div className="work-gallery">
+                      <div className={`work-gallery${cat.isShort ? ' shorts-gallery' : ''}`}>
                         {cat.ids.map((id) => (
-                          <VideoCard key={id} fileId={id} />
+                          <VideoCard key={id} videoId={id} isShort={cat.isShort} />
                         ))}
                       </div>
                     </div>
