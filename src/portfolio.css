@@ -783,6 +783,22 @@ input:checked + .slider:before {
     cursor: default;
 }
 
+/* Frosted corner that hides the "Shorts" watermark YouTube renders into the
+   top-left of an embedded Shorts player (no player parameter removes it). */
+.shorts-item .shorts-branding-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 92px;
+    height: 46px;
+    background: linear-gradient(135deg, rgba(8, 24, 41, 0.6) 0%, rgba(8, 24, 41, 0) 80%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom-right-radius: 18px;
+    pointer-events: auto;
+    z-index: 2;
+}
+
 @media (max-width: 1024px) {
     .videos-section .shorts-gallery {
         grid-template-columns: repeat(4, 1fr);
