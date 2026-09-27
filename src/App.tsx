@@ -120,37 +120,44 @@ const portfolioData = {
       // isShort: true  → 9:16 vertical player (YouTube Shorts)
       // isShort: false → 16:9 horizontal player (regular YouTube)
       videoCategories: [
+        // Titles verified via YouTube oEmbed; layout verified via /shorts/ pages
         {
-          name: 'Edits & Concept Shorts',
+          name: 'AI & Creative Concept Shorts',
           isShort: true,
           ids: [
-            'RCLVTqISFG4',
-            'tuqR9ex2TRM',
-            'ACYIr9roZpU',
-            'LgLTZFCo5uM',
-            'MKBacqSfGB4',
-            '9qeoM2OAy9Y',
-            'WHOBO4K7HGU',
-            'KnwdLdw6jW8',
-            'oDyl_mqVEKA',
-            '3sVzGlPYe4g',
+            'LgLTZFCo5uM', // Ai Generated 1
+            'ACYIr9roZpU', // Ai Generated 2
+            'RCLVTqISFG4', // Ai Generate 3
+            'tuqR9ex2TRM', // Ai Generated 4
+            'oDyl_mqVEKA', // Best Edit Short (Rawana V1)
           ],
         },
         {
-          name: 'Commercial & Promotional',
-          isShort: false,
+          name: 'Promotional & Marketing Ads',
+          isShort: true,
           ids: [
-            'cFlr5yehrZA',
-            'nHv1w0gQtCE',
-            'MxmkDS_Zu1s',
+            '9qeoM2OAy9Y', // D2C Marketing
+            'MKBacqSfGB4', // D2C Marketing 2
+            'WHOBO4K7HGU', // Product Promotional ad
+            'KnwdLdw6jW8', // Promotional Ad 1
+            '3sVzGlPYe4g', // Trading promotional 3
           ],
         },
         {
-          name: 'Challenge & Entertainment Vlogs',
+          name: 'Explainers & Educational Edits',
           isShort: false,
           ids: [
-            '5lVBUFWSCuE',
-            'th4etMIl9ac',
+            'MxmkDS_Zu1s', // Saas Tech Explainer
+            '5lVBUFWSCuE', // Science of Discipline
+            'th4etMIl9ac', // Psychology edit
+          ],
+        },
+        {
+          name: 'Entertainment Videos',
+          isShort: false,
+          ids: [
+            'nHv1w0gQtCE', // Entertainment Youtube Video
+            'cFlr5yehrZA', // Entertainment Youtube Video 2
           ],
         },
       ],
