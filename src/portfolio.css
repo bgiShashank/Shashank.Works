@@ -768,9 +768,12 @@ input:checked + .slider:before {
     border-color: rgba(74, 143, 199, 0.4);
 }
 
-/* YouTube Shorts gallery — portrait 9:16, 4 columns on desktop */
-.shorts-gallery {
-    grid-template-columns: repeat(5, 1fr);
+/* YouTube Shorts gallery — portrait 9:16.
+   NOTE: the generic `.videos-section .work-gallery` rule is more specific
+   than a plain `.shorts-gallery` selector, so a shorts rule must match that
+   specificity (two classes) and be declared after it to win. */
+.videos-section .shorts-gallery {
+    grid-template-columns: repeat(4, 1fr);
     gap: 14px;
 }
 
@@ -781,22 +784,25 @@ input:checked + .slider:before {
 }
 
 @media (max-width: 1024px) {
-    .shorts-gallery {
+    .videos-section .shorts-gallery {
         grid-template-columns: repeat(4, 1fr);
     }
 }
 
 @media (max-width: 768px) {
-    .shorts-gallery {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    /* Regular 16:9 videos: one per row on phones */
     .videos-section .work-gallery {
         grid-template-columns: 1fr;
+    }
+    /* Vertical Shorts: 2 x 2 on a portrait phone screen */
+    .videos-section .shorts-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 }
 
 @media (max-width: 480px) {
-    .shorts-gallery {
+    .videos-section .shorts-gallery {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
