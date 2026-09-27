@@ -400,7 +400,11 @@ export default function App() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
+      // threshold 0 + a small negative bottom margin: reveal as soon as the
+      // element's top enters the viewport. A non-zero threshold never fires for
+      // sections taller than the viewport (the editor galleries are many
+      // viewports tall), which left them stuck at opacity:0 (blank/black).
+      { threshold: 0, rootMargin: '0px 0px -50px 0px' }
     );
   }
   const scrollObserver = observerRef.current!;
@@ -433,6 +437,21 @@ export default function App() {
         scrollObserver.observe(btn);
       });
     }, 120);
+    return () => clearTimeout(timer);
+  }, [currentPortfolio, scrollObserver]);
+
+  // Safety net: every element carrying `.scroll-fade-in` starts at opacity:0 and
+  // is only revealed once it is observed. Some of them are created after mount
+  // (web project cards, the video-mode "Softwares" section, the editor
+  // galleries), and a fixed selector list missed them — so they stayed
+  // invisible and the section looked blank/black. Re-scan the DOM on mount and
+  // on every portfolio switch and observe anything not yet revealed.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      document
+        .querySelectorAll('.scroll-fade-in:not(.visible)')
+        .forEach((el) => scrollObserver.observe(el));
+    }, 150);
     return () => clearTimeout(timer);
   }, [currentPortfolio, scrollObserver]);
 
