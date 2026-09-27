@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './portfolio.css';
+import BackgroundArt from './BackgroundArt';
+import CustomCursor from './CustomCursor';
+import ClickBubbles from './ClickBubbles';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com/bgiShashank/Shashank.Works/main';
 
@@ -551,6 +554,10 @@ export default function App() {
 
   return (
     <>
+      {/* Ambient art layers (doodle constellation, custom cursor, click bubbles) */}
+      <BackgroundArt />
+      <CustomCursor />
+      <ClickBubbles />
       <div className="container" id="main-container">
         {/* Header */}
         <header className="header">

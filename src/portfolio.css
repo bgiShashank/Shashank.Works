@@ -1369,3 +1369,165 @@ body::after {
     border: 1px solid var(--glass-stroke);
     box-shadow: var(--glass-inner), 0 34px 90px rgba(0, 0, 0, 0.7), 0 0 40px rgba(74, 143, 199, 0.35);
 }
+
+/* ==========================================================================
+   Ambient doodle background art (two parallax layers, scroll-reactive)
+   ========================================================================== */
+.bg-art {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bg-art-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 300%; /* three stacked tiles -> seamless parallax loop */
+    will-change: transform;
+}
+
+.bg-art-tile {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 33.333%;
+}
+
+.bg-doodle {
+    position: absolute;
+    display: block;
+    opacity: 0.85;
+}
+
+.bg-doodle svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+
+.bg-art-far .bg-doodle {
+    opacity: 0.55;
+    filter: blur(0.3px);
+}
+
+@keyframes d-twinkle {
+    0%, 100% { opacity: 0.45; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes d-bob {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(0, -9px) rotate(4deg); }
+}
+
+@keyframes d-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes d-dash {
+    to { stroke-dashoffset: -52; }
+}
+
+.bg-doodle.d-twinkle { animation: d-twinkle 3.2s ease-in-out infinite; }
+.bg-doodle.d-bob { animation: d-bob 6s ease-in-out infinite; }
+.bg-doodle.d-spin { animation: d-spin 14s linear infinite; }
+
+.d-dash {
+    animation: d-dash 1.6s linear infinite;
+}
+
+/* ==========================================================================
+   Custom cursor (desktop, fine pointers only) + click bubbles
+   body.has-custom-cursor is set by CustomCursor after it confirms a fine
+   pointer, so touch devices keep the native cursor.
+   ========================================================================== */
+body.has-custom-cursor,
+body.has-custom-cursor a,
+body.has-custom-cursor button,
+body.has-custom-cursor input,
+body.has-custom-cursor label,
+body.has-custom-cursor .toggle-switch,
+body.has-custom-cursor .work-item {
+    cursor: none;
+}
+
+.cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, rgba(168, 213, 255, 0.9) 55%, rgba(123, 179, 232, 0.4) 100%);
+    box-shadow: 0 0 10px rgba(168, 213, 255, 0.9), 0 0 22px rgba(74, 143, 199, 0.55);
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    will-change: transform;
+}
+
+.cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(168, 213, 255, 0.55);
+    background: radial-gradient(circle, rgba(168, 213, 255, 0.08) 0%, rgba(74, 143, 199, 0.05) 60%, transparent 100%);
+    box-shadow: 0 0 14px rgba(74, 143, 199, 0.3), inset 0 0 8px rgba(168, 213, 255, 0.18);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    will-change: transform;
+    transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cursor-ring.cursor-ring--active {
+    width: 54px;
+    height: 54px;
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 20px rgba(123, 179, 232, 0.55), inset 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+.click-bubbles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+.click-bubble {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    will-change: transform, opacity;
+    opacity: 0;
+}
+
+/* Lightbox controls sit above cursor layers */
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    z-index: 10001;
+}
+
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+    .bg-doodle {
+        opacity: 0.4;
+    }
+    .cursor-dot,
+    .cursor-ring {
+        display: none;
+    }
+}
