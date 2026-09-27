@@ -239,9 +239,7 @@ function VideoCard({ videoId, isShort = false }: { videoId: string; isShort?: bo
   // YouTube thumbnails: mqdefault (320×180) works for both regular and Shorts
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
   // autoplay=1 + mute=1: required by browsers; rel=0: no related videos after playback
-  // modestbranding=1: trims YouTube branding (it does NOT remove the Shorts
-  // watermark, which we hide with an overlay below)
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1&modestbranding=1`;
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1`;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -266,20 +264,13 @@ function VideoCard({ videoId, isShort = false }: { videoId: string; isShort?: bo
       ref={containerRef}
     >
       {active ? (
-        <>
-          <iframe
-            src={embedUrl}
-            className="video-iframe"
-            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-            allowFullScreen
-            title={`Video ${videoId}`}
-          />
-          {/* YouTube paints a "Shorts" watermark in the player's top-left
-              corner and offers no way to disable it, so frost that corner to
-              hide it. The mask also swallows the click that would otherwise
-              leave the site for YouTube. */}
-          {isShort && <span className="shorts-branding-mask" aria-hidden="true" />}
-        </>
+        <iframe
+          src={embedUrl}
+          className="video-iframe"
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+          allowFullScreen
+          title={`Video ${videoId}`}
+        />
       ) : (
         <img
           src={thumbnailUrl}
