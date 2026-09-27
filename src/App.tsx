@@ -383,8 +383,9 @@ function WorkItem({
 
 // ---------- Main App ----------
 export default function App() {
-  const [currentPortfolio, setCurrentPortfolio] = useState<'web' | 'video'>('web');
-  const [isWeb, setIsWeb] = useState(true);
+  // Land on the Editor profile by default; the toggle switches to Web Developer.
+  const [currentPortfolio, setCurrentPortfolio] = useState<'web' | 'video'>('video');
+  const [isWeb, setIsWeb] = useState(false);
   const [contentVisible, setContentVisible] = useState(true);
   const [lightbox, setLightbox] = useState<LightboxState>({ images: [], index: 0, open: false });
 
@@ -586,7 +587,11 @@ export default function App() {
                 <span
                   className="toggle-label"
                   id="left-label"
-                  style={{ color: isWeb ? 'var(--text-light)' : 'var(--accent-blue)', transition: 'color var(--transition-speed) ease' }}
+                  style={{
+                    color: isWeb ? 'var(--text-light)' : 'rgba(255, 255, 255, 0.5)',
+                    textShadow: isWeb ? '0 0 14px rgba(123, 179, 232, 0.85)' : 'none',
+                    opacity: isWeb ? 1 : 0.85,
+                  }}
                 >
                   Web Developer
                 </span>
@@ -602,7 +607,11 @@ export default function App() {
                 <span
                   className="toggle-label"
                   id="right-label"
-                  style={{ color: !isWeb ? 'var(--text-light)' : 'var(--accent-blue)', transition: 'color var(--transition-speed) ease' }}
+                  style={{
+                    color: !isWeb ? 'var(--text-light)' : 'rgba(255, 255, 255, 0.5)',
+                    textShadow: !isWeb ? '0 0 14px rgba(123, 179, 232, 0.85)' : 'none',
+                    opacity: !isWeb ? 1 : 0.85,
+                  }}
                 >
                   Editor
                 </span>
