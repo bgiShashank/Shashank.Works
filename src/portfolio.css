@@ -1215,3 +1215,157 @@ html {
     .lightbox-prev { left: -15px; }
     .lightbox-next { right: -15px; }
 }
+
+/* ==========================================================================
+   Liquid Glass + 3D polish
+   Layered translucent surfaces with specular highlights and real depth, kept
+   inside the existing deep-blue palette. Declared last so it wins over the
+   base rules. Deliberately sets no padding/size that a media query controls,
+   so the responsive layout stays intact.
+   ========================================================================== */
+:root {
+    --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.05) 34%, rgba(255, 255, 255, 0) 58%);
+    --glass-tint: linear-gradient(135deg, rgba(28, 74, 122, 0.55) 0%, rgba(10, 31, 58, 0.5) 100%);
+    --glass-stroke: rgba(150, 205, 255, 0.26);
+    --glass-stroke-strong: rgba(165, 218, 255, 0.48);
+    --glass-inner: inset 0 1px 0 rgba(255, 255, 255, 0.34),
+                   inset 0 -1px 1px rgba(255, 255, 255, 0.06),
+                   inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    --glass-depth: 0 22px 48px rgba(0, 0, 0, 0.5), 0 8px 18px rgba(0, 0, 0, 0.35);
+    --glass-depth-hover: 0 34px 72px rgba(0, 0, 0, 0.6), 0 12px 26px rgba(0, 0, 0, 0.4);
+    --glass-glow: 0 0 26px rgba(74, 143, 199, 0.28);
+    --glass-blur: blur(20px) saturate(180%);
+}
+
+/* Soft light orbs behind the content for depth of field */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(closest-side at 12% 18%, rgba(74, 143, 199, 0.18), transparent),
+        radial-gradient(closest-side at 88% 78%, rgba(45, 107, 160, 0.16), transparent);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Frosted (liquid glass) surfaces */
+.header,
+.toggle-container,
+.skill-card,
+.software-card,
+.web-project-card,
+.work-item,
+.contact-btn {
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+}
+
+/* Glass cards: sheen above a blue tint, crisp edge + inner highlight */
+.skill-card,
+.software-card,
+.web-project-card,
+.work-item {
+    background-image: var(--glass-sheen), var(--glass-tint);
+    border: 1px solid var(--glass-stroke);
+    box-shadow: var(--glass-inner), var(--glass-depth), var(--glass-glow);
+    transition: transform var(--transition-speed) cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow var(--transition-speed) ease,
+                border-color var(--transition-speed) ease;
+}
+
+/* Shared perspective so a hovered card tilts in real 3D */
+.skills-container,
+.software-container,
+.projects-container,
+.work-gallery {
+    perspective: 1400px;
+}
+
+.skill-card:hover,
+.software-card:hover,
+.web-project-card:hover {
+    transform: translateY(-10px) rotateX(5deg) rotateY(-5deg) scale(1.03);
+    box-shadow: var(--glass-inner), var(--glass-depth-hover), 0 0 34px rgba(74, 143, 199, 0.42);
+    border-color: var(--glass-stroke-strong);
+}
+
+.work-item:hover {
+    transform: translateY(-8px) rotateX(3deg) rotateY(-3deg) scale(1.02);
+    box-shadow: var(--glass-inner), var(--glass-depth-hover), 0 0 30px rgba(74, 143, 199, 0.4);
+    border-color: var(--glass-stroke-strong);
+}
+
+/* Header bar */
+.header {
+    background-image: var(--glass-sheen), linear-gradient(180deg, rgba(12, 34, 62, 0.78) 0%, rgba(8, 24, 41, 0.62) 100%);
+    border-bottom: 1px solid var(--glass-stroke);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Toggle pill */
+.toggle-container {
+    background-image: var(--glass-sheen), linear-gradient(135deg, rgba(20, 58, 98, 0.55) 0%, rgba(10, 31, 58, 0.45) 100%);
+    border: 1px solid var(--glass-stroke);
+    box-shadow: var(--glass-inner), var(--glass-depth), var(--glass-glow);
+}
+
+/* Glass buttons */
+.contact-btn {
+    background-image: var(--glass-sheen), linear-gradient(135deg, rgba(20, 58, 98, 0.62) 0%, rgba(10, 31, 58, 0.52) 100%);
+    border: 1px solid var(--glass-stroke);
+    box-shadow: var(--glass-inner), 0 10px 26px rgba(0, 0, 0, 0.45), 0 0 18px rgba(74, 143, 199, 0.22);
+    transition: transform var(--transition-speed) cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow var(--transition-speed) ease,
+                border-color var(--transition-speed) ease;
+}
+
+.contact-btn:hover {
+    background-image: var(--glass-sheen), linear-gradient(135deg, rgba(28, 74, 122, 0.72) 0%, rgba(12, 36, 66, 0.6) 100%);
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: var(--glass-inner), 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 28px rgba(74, 143, 199, 0.45);
+    border-color: var(--glass-stroke-strong);
+}
+
+/* Skill icons -> glass app tiles */
+.skill-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 18px auto;
+    font-size: 2.1rem;
+    border-radius: 22px;
+    background-image: var(--glass-sheen), linear-gradient(135deg, rgba(74, 143, 199, 0.5) 0%, rgba(10, 31, 58, 0.62) 100%);
+    border: 1px solid var(--glass-stroke);
+    box-shadow: var(--glass-inner), 0 12px 26px rgba(0, 0, 0, 0.45), 0 0 20px rgba(74, 143, 199, 0.32);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+}
+
+/* Software logos -> glass tiles (brand gradients stay underneath) */
+.software-logo {
+    border: 1px solid var(--glass-stroke);
+    box-shadow: var(--glass-inner), 0 12px 26px rgba(0, 0, 0, 0.5), 0 0 18px rgba(74, 143, 199, 0.3);
+}
+
+/* Contact icons -> small glass chips */
+.contact-icon {
+    box-sizing: content-box;
+    padding: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Hero avatar ring */
+.profile-image-wrapper {
+    border: 5px solid rgba(150, 205, 255, 0.32);
+    box-shadow: var(--glass-inner), 0 26px 62px rgba(0, 0, 0, 0.65), 0 0 40px rgba(74, 143, 199, 0.38);
+}
+
+/* Lightbox frame */
+.lightbox-image {
+    border: 1px solid var(--glass-stroke);
+    box-shadow: var(--glass-inner), 0 34px 90px rgba(0, 0, 0, 0.7), 0 0 40px rgba(74, 143, 199, 0.35);
+}
