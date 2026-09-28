@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 
 type DoodleKind =
-  | 'star4'
-  | 'star5'
   | 'dots'
   | 'moon'
   | 'planet'
@@ -11,7 +9,6 @@ type DoodleKind =
   | 'zigzag'
   | 'burst'
   | 'orbit'
-  | 'heart'
   | 'plus';
 
 interface DoodleDef {
@@ -27,17 +24,15 @@ interface DoodleDef {
 
 // Far layer: small, faint, slow parallax.
 const FAR_DOODLES: DoodleDef[] = [
-  { x: 8, y: 12, size: 30, kind: 'star4', anim: 'twinkle' },
-  { x: 38, y: 7, size: 34, kind: 'star5', anim: 'bob' },
-  { x: 70, y: 11, size: 26, kind: 'plus', anim: 'twinkle' },
+  { x: 8, y: 12, size: 30, kind: 'plus', anim: 'twinkle' },
+  { x: 38, y: 7, size: 34, kind: 'plus', anim: 'twinkle' },
   { x: 22, y: 34, size: 56, kind: 'squiggle', anim: 'dash' },
   { x: 60, y: 30, size: 34, kind: 'dots', anim: 'twinkle' },
   { x: 88, y: 38, size: 44, kind: 'moon', anim: 'bob' },
-  { x: 14, y: 58, size: 28, kind: 'star4', anim: 'twinkle' },
+  { x: 14, y: 58, size: 28, kind: 'plus', anim: 'twinkle' },
   { x: 45, y: 62, size: 52, kind: 'zigzag', anim: 'bob' },
   { x: 78, y: 70, size: 36, kind: 'burst', anim: 'spin' },
-  { x: 93, y: 88, size: 30, kind: 'star5', anim: 'twinkle' },
-  { x: 33, y: 85, size: 30, kind: 'dots', anim: 'twinkle' },
+  { x: 93, y: 88, size: 30, kind: 'dots', anim: 'twinkle' },
   { x: 55, y: 45, size: 24, kind: 'plus', anim: 'twinkle' },
 ];
 
@@ -46,39 +41,20 @@ const NEAR_DOODLES: DoodleDef[] = [
   { x: 18, y: 22, size: 62, kind: 'planet', anim: 'spin' },
   { x: 52, y: 16, size: 64, kind: 'cloud', anim: 'bob' },
   { x: 82, y: 20, size: 56, kind: 'moon', anim: 'bob' },
-  { x: 35, y: 40, size: 58, kind: 'star4', anim: 'twinkle' },
-  { x: 68, y: 48, size: 48, kind: 'heart', anim: 'bob' },
+  { x: 35, y: 40, size: 58, kind: 'dots', anim: 'twinkle' },
+  { x: 68, y: 48, size: 48, kind: 'plus', anim: 'twinkle' },
   { x: 10, y: 72, size: 64, kind: 'squiggle', anim: 'dash' },
-  { x: 48, y: 78, size: 54, kind: 'star5', anim: 'twinkle' },
+  { x: 48, y: 78, size: 54, kind: 'plus', anim: 'twinkle' },
   { x: 88, y: 74, size: 60, kind: 'orbit', anim: 'spin' },
   { x: 62, y: 60, size: 36, kind: 'dots', anim: 'twinkle' },
   { x: 28, y: 90, size: 44, kind: 'burst', anim: 'twinkle' },
   { x: 92, y: 52, size: 30, kind: 'plus', anim: 'twinkle' },
-  { x: 5, y: 44, size: 36, kind: 'star4', anim: 'twinkle' },
+  { x: 5, y: 44, size: 36, kind: 'plus', anim: 'twinkle' },
 ];
 
 function DoodleShape({ kind }: { kind: DoodleKind }) {
   switch (kind) {
-    case 'star4':
-      return (
-        <path
-          d="M0 -16 C1.8 -5.5 5.5 -1.8 16 0 C5.5 1.8 1.8 5.5 0 16 C-1.8 5.5 -5.5 1.8 -16 0 C-5.5 -1.8 -1.8 -5.5 0 -16 Z"
-          fill="rgba(123,179,232,0.30)"
-          stroke="rgba(168,213,255,0.75)"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-      );
-    case 'star5':
-      return (
-        <path
-          d="M0 -18 L5.3 -5.6 L18 -5.6 L7.3 2.2 L10.6 14.6 L0 7.2 L-10.6 14.6 L-7.3 2.2 L-18 -5.6 L-5.3 -5.6 Z"
-          fill="rgba(74,143,199,0.18)"
-          stroke="rgba(123,179,232,0.7)"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-      );
+
     case 'dots':
       return (
         <g fill="rgba(168,213,255,0.55)">
@@ -155,16 +131,7 @@ function DoodleShape({ kind }: { kind: DoodleKind }) {
           <circle cx="13" cy="0" r="3" fill="rgba(168,213,255,0.75)" />
         </g>
       );
-    case 'heart':
-      return (
-        <path
-          d="M0 10 C-13 0 -11 -14 0 -7 C11 -14 13 0 0 10 Z"
-          fill="rgba(74,143,199,0.16)"
-          stroke="rgba(150,205,255,0.65)"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-      );
+
     case 'plus':
       return <path d="M0 -11 V11 M-11 0 H11" stroke="rgba(168,213,255,0.6)" strokeWidth="2.6" strokeLinecap="round" />;
     default:

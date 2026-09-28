@@ -27,7 +27,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+    background: linear-gradient(180deg, rgba(8, 24, 41, 0.6) 0%, rgba(10, 31, 58, 0.5) 40%, rgba(8, 24, 41, 0.4) 70%, rgba(10, 31, 58, 0.3) 100%);
     background-attachment: fixed;
     color: var(--text-light);
     line-height: 1.6;
@@ -1237,6 +1237,37 @@ html {
     --glass-blur: blur(20px) saturate(180%);
 }
 
+/* Underwater light beams from surface */
+.underwater-light {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.underwater-light::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 30%;
+    width: 12px;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(168, 213, 255, 0.02) 0%, transparent 80%);
+    border-radius: 2px;
+}
+
+.underwater-light::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: auto;
+    right: 35%;
+    width: 10px;
+    height: 45%;
+    background: linear-gradient(to bottom, rgba(74, 143, 199, 0.015) 0%, transparent 80%);
+    border-radius: 2px;
+}
+
 /* Soft light orbs behind the content for depth of field */
 body::after {
     content: '';
@@ -1371,7 +1402,90 @@ body::after {
 }
 
 /* ==========================================================================
-   Ambient doodle background art (two parallax layers, scroll-reactive)
+   Liquid underwater surface layer
+   ========================================================================== */
+/* A subtle liquid surface at the top of the viewport,
+   giving the impression of being underwater. */
+.liquid-surface {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12vh;
+    z-index: 2;
+    pointer-events: none;
+    border-radius: 0 0 100% 100%;
+    background: linear-gradient(180deg,
+            rgba(123, 179, 232, 0.03) 0%,
+            rgba(168, 213, 255, 0.06) 30%,
+            rgba(74, 143, 199, 0.04) 50%,
+            transparent 100%);
+    box-shadow: 0 0 60px rgba(74, 143, 199, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.liquid-surface::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.01) 2px,
+        rgba(255, 255, 255, 0.01) 4px
+    );
+    border-radius: 100%;
+    pointer-events: none;
+}
+
+/* Underwater caustics pattern (moving light patterns on the floor) */
+.caustics {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50vh;
+    pointer-events: none;
+    z-index: 1;
+    background:
+        radial-gradient(ellipse at 20% 80%, rgba(168, 213, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(123, 179, 232, 0.02) 0%, transparent 50%),
+        radial-gradient(ellipse at 40% 60%, rgba(74, 143, 199, 0.02) 0%, transparent 50%);
+    animation: causticsShift 6s ease-in-out infinite alternate;
+}
+
+@keyframes causticsShift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(30px); }
+}
+
+/* Body-level underwater tint (layered over the background gradient) */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 80%, rgba(45, 107, 160, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Mobile/tablet: keep the underwater palette but slightly reduce the surface glow */
+@media (max-width: 640px) {
+    .liquid-surface {
+        height: 8vh;
+    }
+    .caustics {
+        height: 35vh;
+    }
+}
+
+/* ==========================================================================
+   Liquid Glass + 3D polish
+   Laid over the existing 3D base. These are the surface-level refinements
+   that make the UI feel like something alive beneath the waves.
    ========================================================================== */
 .bg-art {
     position: fixed;
@@ -1513,6 +1627,136 @@ body.has-custom-cursor .work-item {
     border-radius: 50%;
     will-change: transform, opacity;
     opacity: 0;
+}
+
+/* Underwater 3D ambient effects */
+.underwater-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(ellipse at 50% 100%, rgba(45, 107, 160, 0.04) 0%, transparent 60%);
+}
+
+.underwater-container::before,
+.underwater-container::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+.underwater-container::before {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(74, 143, 199, 0.08) 0%, transparent 70%);
+    top: -200px;
+    left: -100px;
+    animation: underwaterGlow 8s ease-in-out infinite alternate;
+}
+
+.underwater-container::after {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(45, 107, 160, 0.06) 0%, transparent 70%);
+    bottom: -100px;
+    right: -100px;
+    animation: underwaterGlow 10s ease-in-out infinite alternate-reverse;
+}
+
+.underwater-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat 12s ease-in-out infinite;
+    transform: translateY(100vh) translateX(0);
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) translateX(0) scale(0.5);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10vh) translateX(120px) scale(1.5);
+    }
+}
+
+.underwater-blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: blobDrift 16s ease-in-out infinite;
+    transform: translateY(100vh);
+}
+
+@keyframes blobDrift {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) translateX(0) scale(0.8);
+    }
+    20% {
+        opacity: 0.5;
+    }
+    80% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8vh) translateX(80px) scale(1.2);
+    }
+}
+
+.blob-animate {
+    animation-duration: 20s;
+    animation-delay: 4s;
+}
+
+.underwater-gradient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(8, 24, 41, 0.3) 0%, rgba(10, 31, 58, 0.5) 30%, rgba(8, 24, 41, 0.7) 60%, rgba(10, 31, 58, 0.9) 100%);
+}
+
+/* Underwater light rays coming from top */
+.light-rays {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(123, 179, 232, 0.015) 2px,
+        rgba(123, 179, 232, 0.015) 4px
+    );
+    transform: skewY(-3deg);
+    border-radius: 50%;
+}
+
+.light-rays::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    width: 2px;
+    height: 200%;
+    background: linear-gradient(to bottom, rgba(168, 213, 255, 0.04), transparent);
+    transform: translateX(-50%);
+    border-radius: 1px;
 }
 
 /* Lightbox controls sit above cursor layers */
