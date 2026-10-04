@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './portfolio.css';
-import BackgroundArt from './BackgroundArt';
 import CustomCursor from './CustomCursor';
 import ClickBubbles from './ClickBubbles';
 import Underwater3DEffects from './Underwater3DEffects';
@@ -555,8 +554,7 @@ export default function App() {
 
   return (
     <>
-      {/* Ambient art layers (doodle constellation, custom cursor, click bubbles) */}
-      <BackgroundArt />
+      {/* Ambient art layers (custom cursor, click bubbles) */}
       <Underwater3DEffects />
       <CustomCursor />
       <ClickBubbles />
