@@ -164,6 +164,21 @@ const portfolioData = {
             'cFlr5yehrZA', // Entertainment Youtube Video 2
           ],
         },
+        {
+          name: 'Motion Design Edits',
+          isShort: true,
+          ids: [
+            'wpw9VAis2nM', // Motion Design Edit 1
+            'jXuaAX2L1lM', // Motion Design Edit 2
+          ],
+        },
+        {
+          name: 'Advance level edit',
+          isShort: false,
+          ids: [
+            '5Snos7GGpUA', // Advance level edit
+          ],
+        },
       ],
     },
   },
