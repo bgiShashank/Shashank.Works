@@ -349,13 +349,23 @@ function VideoCard({
   );
 }
 
-// ---------- ShortsRow -------------------------------------------------------
-// The Shorts of every category stay on ONE line: exactly 5 visible side by
-// side on desktop. Anything beyond that scrolls horizontally — via the arrow
-// buttons, a trackpad swipe or Shift+wheel, or click-and-drag on the row. The
-// vertical wheel intentionally still scrolls the page, not the row.
+// ---------- ScrollRow -------------------------------------------------------
+// One scrollable line: a fixed number of tiles visible side by side, the rest
+// reached with the arrow buttons, a trackpad swipe or Shift+wheel, or
+// click-and-drag on the row. Shorts use 5 visible, Thumbnails 6. The vertical
+// wheel intentionally still scrolls the page, not the row.
 // ---------------------------------------------------------------------------
-function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
+function ScrollRow({
+  className,
+  count,
+  label,
+  children,
+}: {
+  className: string;
+  count: number;
+  label: string;
+  children: React.ReactNode;
+}) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -384,7 +394,7 @@ function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
       el.removeEventListener('scroll', syncEdges);
       window.removeEventListener('resize', syncEdges);
     };
-  }, [syncEdges, ids.length]);
+  }, [syncEdges, count]);
 
   const page = (dir: number) => {
     const el = rowRef.current;
@@ -422,26 +432,26 @@ function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
 
   const endDrag = () => {
     drag.current.active = false;
-    rowRef.current?.classList.remove('shorts-gallery--dragging');
+    rowRef.current?.classList.remove('is-dragging');
   };
 
   const onDragStart = () => {
-    if (drag.current.active) rowRef.current?.classList.add('shorts-gallery--dragging');
+    if (drag.current.active) rowRef.current?.classList.add('is-dragging');
   };
 
   return (
-    <div className="shorts-row">
+    <div className="scroll-row">
       <button
         type="button"
         className="shorts-nav shorts-nav-prev"
         onClick={() => page(-1)}
         disabled={atStart}
-        aria-label="Scroll Shorts left"
+        aria-label={`Scroll ${label} left`}
       >
         ‹
       </button>
       <div
-        className="work-gallery shorts-gallery"
+        className={`work-gallery ${className}`}
         ref={rowRef}
         onPointerDown={onPointerDown}
         onPointerMove={(e) => {
@@ -451,16 +461,14 @@ function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        {ids.map((id) => (
-          <VideoCard key={id} videoId={id} isShort autoplay={autoplay} />
-        ))}
+        {children}
       </div>
       <button
         type="button"
         className="shorts-nav shorts-nav-next"
         onClick={() => page(1)}
         disabled={atEnd}
-        aria-label="Scroll Shorts right"
+        aria-label={`Scroll ${label} right`}
       >
         ›
       </button>
@@ -473,12 +481,14 @@ function WorkSection({
   title,
   images,
   isThumbnails,
+  scrollAll = false,
   onOpenLightbox,
   scrollObserver,
 }: {
   title: string;
   images: string[];
   isThumbnails?: boolean;
+  scrollAll?: boolean;
   onOpenLightbox: (images: string[], index: number) => void;
   scrollObserver: IntersectionObserver;
 }) {
@@ -496,6 +506,17 @@ function WorkSection({
   const visible = showAll ? images : images.slice(0, 3);
   const hidden = images.slice(3);
 
+  const renderItem = (src: string, idx: number) => (
+    <WorkItem
+      key={src}
+      src={src}
+      alt={`${title} ${idx + 1}`}
+      delay={(idx % 4) + 1}
+      onClick={() => onOpenLightbox(images, idx)}
+      scrollObserver={scrollObserver}
+    />
+  );
+
   return (
     <div
       // `work-section-<title>` gives each gallery a semantic hook (e.g.
@@ -505,26 +526,24 @@ function WorkSection({
       ref={sectionRef}
     >
       <h3 className="work-section-title">{title}</h3>
-      <div className={`work-gallery${isThumbnails ? '' : ''}`}>
-        {visible.map((src, idx) => (
-          <WorkItem
-            key={src}
-            src={src}
-            alt={`${title} ${idx + 1}`}
-            delay={(idx % 4) + 1}
-            onClick={() => onOpenLightbox(images, idx)}
-            scrollObserver={scrollObserver}
-          />
-        ))}
-        {/* Images 4+ are already rendered above once `showAll` is set —
-            rendering `hidden` again here duplicated every extra tile. */}
-      </div>
-      {!showAll && hidden.length > 0 && (
-        <div className="view-more-container">
-          <button className="contact-btn view-more-btn" onClick={() => setShowAll(true)}>
-            View More
-          </button>
-        </div>
+      {scrollAll ? (
+        // Too many tiles to stack, so they ride one scrollable line.
+        <ScrollRow className="thumbnails-gallery" count={images.length} label={title}>
+          {images.map(renderItem)}
+        </ScrollRow>
+      ) : (
+        <>
+          {/* Images 4+ come from `visible` once `showAll` is set — rendering
+              the `hidden` list here too duplicated every extra tile. */}
+          <div className="work-gallery">{visible.map(renderItem)}</div>
+          {!showAll && hidden.length > 0 && (
+            <div className="view-more-container">
+              <button className="contact-btn view-more-btn" onClick={() => setShowAll(true)}>
+                View More
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -986,6 +1005,7 @@ export default function App() {
                   title="Thumbnails"
                   images={portfolioData.video.work.thumbnails}
                   isThumbnails
+                  scrollAll
                   onOpenLightbox={openLightbox}
                   scrollObserver={scrollObserver}
                 />
@@ -1010,7 +1030,15 @@ export default function App() {
                     <div key={cat.name} className="video-category">
                       <h4 className="video-category-title">{cat.name}</h4>
                       {cat.isShort ? (
-                        <ShortsRow ids={cat.ids} autoplay={videosAutoplay} />
+                        <ScrollRow
+                          className="shorts-gallery"
+                          count={cat.ids.length}
+                          label={cat.name}
+                        >
+                          {cat.ids.map((id) => (
+                            <VideoCard key={id} videoId={id} isShort autoplay={videosAutoplay} />
+                          ))}
+                        </ScrollRow>
                       ) : (
                         <div className="work-gallery">
                           {cat.ids.map((id) => (
