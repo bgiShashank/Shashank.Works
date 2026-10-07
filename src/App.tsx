@@ -152,10 +152,10 @@ const portfolioData = {
           ids: [
             'twMd_fISfv4', // Promotional Ad - top-left
             'wHRS0WFNP0w', // Promotional Ad - top-left
+            'KnwdLdw6jW8', // Promotional Ad 1 - 3rd slot
             'WHOBO4K7HGU', // Product Promotional ad
             '9qeoM2OAy9Y', // D2C Marketing - top-right
-            'MKBacqSfGB4', // D2C Marketing 2 - top-right
-            'KnwdLdw6jW8', // Promotional Ad 1
+            'MKBacqSfGB4', // D2C Marketing 2
             '3sVzGlPYe4g', // Trading promotional 3
           ],
         },
