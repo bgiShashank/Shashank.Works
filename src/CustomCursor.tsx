@@ -12,6 +12,9 @@ export default function CustomCursor() {
 
   useEffect(() => {
     if (!window.matchMedia('(pointer: fine)').matches) return;
+    // The trailing cursor ring is purely decorative — skip it entirely when the
+    // visitor asks for reduced motion.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;

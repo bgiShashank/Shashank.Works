@@ -208,6 +208,32 @@ const iconMap: Record<string, string> = {
   Freelancer: `${GITHUB_RAW}/Images/Freelancer_logo.png`,
 };
 
+// ---------- FadeInImage ----------
+// Gallery art is fetched from a remote host and arrives late, so it used to pop
+// in abruptly. Fade it in once decoded. A cached image never fires `load`, so
+// mark it ready on mount; an error also reveals it rather than leaving a void.
+// ---------------------------------------------------------------------------
+function FadeInImage({
+  className,
+  ...props
+}: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const ref = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (ref.current?.complete) ref.current.classList.add('is-loaded');
+  }, []);
+
+  return (
+    <img
+      ref={ref}
+      className={`img-fade${className ? ` ${className}` : ''}`}
+      onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+      onError={(e) => e.currentTarget.classList.add('is-loaded')}
+      {...props}
+    />
+  );
+}
+
 // ---------- Lightbox ----------
 interface LightboxState {
   images: string[];
@@ -224,18 +250,46 @@ function Lightbox({
   onClose: () => void;
   onNavigate: (step: number) => void;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (!state.open) return;
+
+    // Move focus into the dialog on open and hand it back on close, so keyboard
+    // users are not stranded at the top of the page afterwards.
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
       if (e.key === 'ArrowLeft') onNavigate(-1);
       if (e.key === 'ArrowRight') onNavigate(1);
+      if (e.key === 'Tab') {
+        // Keep Tab cycling inside the dialog.
+        const focusables = containerRef.current?.querySelectorAll<HTMLElement>('button');
+        if (!focusables || focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener('keydown', handler);
     document.body.classList.add('no-scroll');
     return () => {
       document.removeEventListener('keydown', handler);
       document.body.classList.remove('no-scroll');
+      restoreFocusRef.current?.focus();
     };
   }, [state.open, onClose, onNavigate]);
 
@@ -245,13 +299,41 @@ function Lightbox({
   return (
     <div
       className="lightbox-overlay active"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Work image ${state.index + 1} of ${state.images.length}`}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="lightbox-content">
-        <img src={src} alt={`Work image ${state.index + 1}`} className="lightbox-image" />
-        <button className="lightbox-close" onClick={onClose}>✕</button>
-        <button className="lightbox-prev" onClick={() => onNavigate(-1)}>‹</button>
-        <button className="lightbox-next" onClick={() => onNavigate(1)}>›</button>
+      <div className="lightbox-content" ref={containerRef}>
+        <img key={src} src={src} alt={`Work image ${state.index + 1}`} className="lightbox-image" />
+        <span className="lightbox-counter" aria-hidden="true">
+          {state.index + 1} / {state.images.length}
+        </span>
+        <button
+          ref={closeButtonRef}
+          type="button"
+          className="lightbox-close"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ✕
+        </button>
+        <button
+          type="button"
+          className="lightbox-prev"
+          onClick={() => onNavigate(-1)}
+          aria-label="Previous image"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          className="lightbox-next"
+          onClick={() => onNavigate(1)}
+          aria-label="Next image"
+        >
+          ›
+        </button>
       </div>
     </div>
   );
@@ -329,11 +411,12 @@ function VideoCard({
         />
       ) : (
         <>
-          <img
+          <FadeInImage
             src={thumbnailUrl}
             alt="Video preview"
             className="work-image"
             loading="lazy"
+            decoding="async"
           />
           <button
             type="button"
@@ -574,7 +657,7 @@ function WorkItem({
 
   return (
     <div className="work-item" ref={ref} onClick={onClick}>
-      <img src={src} alt={alt} className="work-image" loading="lazy" />
+      <FadeInImage src={src} alt={alt} className="work-image" loading="lazy" decoding="async" />
     </div>
   );
 }
@@ -791,7 +874,7 @@ export default function App() {
       <div className="container" id="main-container">
         {/* Header */}
         <header className="header">
-          <nav className="nav">
+          <nav className="nav" aria-label="Main">
             <ul className="nav-list">
               {['#home', '#about', '#skills', '#projects', '#contact'].map((href) => (
                 <li key={href}>
@@ -817,12 +900,14 @@ export default function App() {
                 alt="Web Developer Profile"
                 className={`profile-image${isWeb ? ' active' : ''}`}
                 id="profile-web"
+                decoding="async"
               />
               <img
                 src={`${GITHUB_RAW}/Images/Editor_Profile_Pic.png`}
                 alt="Editor Profile"
                 className={`profile-image${!isWeb ? ' active' : ''}`}
                 id="profile-video"
+                decoding="async"
               />
             </div>
             <div className="shashank-signature-name">Shashank Vishwakarma</div>
@@ -969,7 +1054,7 @@ export default function App() {
                 <div key={it.key} className="software-card">
                   {it.icon ? (
                     <div className="software-logo">
-                      <img src={it.icon} alt={`${it.name} logo`} className="software-logo-img" />
+                      <img src={it.icon} alt={`${it.name} logo`} className="software-logo-img" decoding="async" />
                     </div>
                   ) : (
                     <div className={`software-logo software-${it.key}`}>{it.label}</div>
@@ -999,7 +1084,13 @@ export default function App() {
               >
                 <a href={project.link} target="_blank" rel="noopener noreferrer" className="project-link">
                   <div className="project-image-wrapper">
-                    <img src={project.image} alt={project.name} className="project-image" />
+                    <FadeInImage
+                      src={project.image}
+                      alt={project.name}
+                      className="project-image"
+                      loading="lazy"
+                      decoding="async"
+                    />
                     <div className="project-overlay">
                       <span className="project-link-text">Visit Website →</span>
                     </div>
@@ -1113,7 +1204,7 @@ export default function App() {
                     {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                     className="contact-btn contact-btn-icon"
                   >
-                    {icon && <img src={icon} alt={link.label} className="contact-icon" />}
+                    {icon && <img src={icon} alt={link.label} className="contact-icon" loading="lazy" decoding="async" />}
                     <span>{link.label}</span>
                   </a>
                 );

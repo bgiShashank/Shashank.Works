@@ -50,8 +50,11 @@ body::before {
 }
 
 /* Unique signature name above toggle */
+/* Signature name. 'Primor Stylish' is a premium font that is not on Google
+   Fonts, so it resolves only where it is installed (or installed via a
+   @font-face rule); the stack below is the fallback. */
 .shashank-signature-name {
-    font-family: 'Dharma Gothic E', 'Boomerang Script', 'Vivaldi', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Primor Stylish', 'PrimorStylish', 'Dharma Gothic E', 'Boomerang Script', 'Vivaldi', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 700;
     font-size: 1.4rem;
     text-transform: none;
@@ -1076,11 +1079,15 @@ body.no-scroll {
     color: rgba(255, 255, 255, 0.9);
 }
 
+/* A clean grid instead of centred wrapping pills: every tile is the same
+   width and rows line up, so the icons read as an aligned set rather than a
+   ragged, scattered cluster. */
 .contact-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    max-width: 460px;
+    margin: 0 auto;
 }
 
 .contact-btn {
@@ -1101,13 +1108,19 @@ body.no-scroll {
 .contact-btn-icon {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
+    width: 100%;
+    padding: 14px 18px;
+    text-align: center;
 }
 
 .contact-icon {
+    flex: 0 0 20px;
     width: 20px;
     height: 20px;
-    display: inline-block;
+    object-fit: contain;
+    display: block;
 }
 
 .contact-btn:hover {
@@ -1116,6 +1129,19 @@ body.no-scroll {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
                 0 0 20px rgba(45, 107, 160, 0.4);
     border-color: var(--light-blue);
+}
+
+@media (min-width: 640px) {
+    .contact-buttons {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 360px) {
+    .contact-buttons {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 /* Footer */
@@ -2034,5 +2060,188 @@ body.has-custom-cursor * {
     .profile-switch-option {
         font-size: 0.85rem;
         padding: 6px 12px 7px;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Reduced motion: honour the OS setting — collapse decorative
+   animations and transitions instead of forcing them on.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Visual polish pass
+   ------------------------------------------------------------------ */
+
+/* Visible keyboard focus for every interactive element — the theme has no
+   default outline that reads well against this dark blue. */
+:focus-visible {
+    outline: 2px solid var(--bright-blue);
+    outline-offset: 3px;
+}
+
+::selection {
+    background: rgba(123, 179, 232, 0.35);
+    color: #ffffff;
+}
+
+/* Themed scrollbars for the page itself (the galleries style their own). */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(74, 143, 199, 0.7) rgba(8, 24, 41, 0.6);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(8, 24, 41, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(74, 143, 199, 0.7) 0%, rgba(18, 53, 92, 0.85) 100%);
+    border-radius: 999px;
+    border: 2px solid rgba(8, 24, 41, 0.6);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 179, 232, 0.8);
+}
+
+/* Logos are marks of many shapes — show the whole mark instead of cropping it
+   to the square tile. */
+.work-section-logos .work-image {
+    object-fit: contain;
+    padding: 12px;
+}
+
+/* Banners are wide artwork too, so keep a wide frame instead of a square. */
+.work-section-banners .work-item {
+    aspect-ratio: 16 / 9;
+}
+
+.work-section-banners .work-image {
+    object-fit: contain;
+}
+
+/* One hover lift for the card grids (they were 8 / 10 / 4 px). */
+.skill-card:hover,
+.software-card:hover,
+.web-project-card:hover {
+    transform: translateY(-8px);
+}
+
+/* The caption above the profile switch was hard to read. */
+.profile-switch-hint {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Slow conic glow rotating behind the profile picture. The ring tracks the
+   avatar size, which changes at the same two breakpoints below. */
+.profile-container {
+    --avatar: 200px;
+}
+
+.profile-image-wrapper {
+    z-index: 1;
+}
+
+.profile-container::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    width: calc(var(--avatar) + 12px);
+    height: calc(var(--avatar) + 12px);
+    margin-left: calc((var(--avatar) + 12px) / -2);
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        rgba(168, 213, 255, 0) 0deg,
+        rgba(168, 213, 255, 0.45) 70deg,
+        rgba(74, 143, 199, 0) 160deg,
+        rgba(123, 179, 232, 0.32) 250deg,
+        rgba(168, 213, 255, 0) 330deg
+    );
+    animation: ringSpin 9s linear infinite;
+    pointer-events: none;
+    /* Behind the avatar and the caption text, so it never tints them. */
+    z-index: -1;
+}
+
+@keyframes ringSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        --avatar: 108px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        --avatar: 96px;
+    }
+}
+
+/* Remote gallery images fade in once decoded instead of popping in. */
+.img-fade {
+    opacity: 0;
+}
+
+.img-fade.is-loaded {
+    animation: imgFadeIn 0.45s ease forwards;
+}
+
+@keyframes imgFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Lightbox: soft crossfade on navigate + an image counter. */
+.lightbox-image {
+    animation: lightboxFade 0.25s ease;
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 14px;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.78);
+    background: rgba(8, 24, 41, 0.72);
+    border: 1px solid rgba(45, 107, 160, 0.5);
+    border-radius: 999px;
+}
+
+@keyframes lightboxFade {
+    from {
+        opacity: 0.25;
+    }
+    to {
+        opacity: 1;
     }
 }
