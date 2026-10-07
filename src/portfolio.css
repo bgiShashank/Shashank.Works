@@ -820,6 +820,15 @@ input:checked + .slider:before {
     height: 100%;
     border: none;
     display: block;
+    /* A live YouTube embed captures the wheel, which trapped page scrolling
+       for anyone whose pointer sat over a video. The embed stays click-through
+       until the card is clicked, and `.video-iframe-interactive` then hands
+       control to the player. */
+    pointer-events: none;
+}
+
+.video-iframe-interactive {
+    pointer-events: auto;
 }
 
 /* Video category groups */
@@ -1223,7 +1232,9 @@ html {
     padding-bottom: 12px;
     scrollbar-width: thin;
     scrollbar-color: rgba(74, 143, 199, 0.6) transparent;
-    touch-action: pan-x;
+    /* Both axes stay available so a vertical swipe over a row still scrolls
+       the page; the browser pans the row for horizontal gestures. */
+    touch-action: pan-x pan-y;
 }
 
 .work-gallery.shorts-gallery::-webkit-scrollbar {

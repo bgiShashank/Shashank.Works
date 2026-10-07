@@ -276,13 +276,15 @@ function VideoCard({
 }) {
   const [inView, setInView] = useState(false);
   const [manualPlay, setManualPlay] = useState(false);
+  // The embed keeps pointer-events: none until the visitor clicks the card, so
+  // a YouTube iframe cannot swallow the wheel and trap page scrolling.
+  const [interactive, setInteractive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // YouTube thumbnails: mqdefault (320×180) works for both regular and Shorts
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-  // autoplay=1 + mute=1: required by browsers; rel=0: no related videos after playback
-  // autoplay=1 + mute=1: required by browsers. A click-to-play embed drops
-  // mute so the visitor hears the audio.
+  // autoplay=1 + mute=1: required by browsers; rel=0: no related videos after
+  // playback. A click-to-play embed drops mute so the visitor hears the audio.
   const embedUrl = manualPlay
     ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&playsinline=1`
     : `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1`;
@@ -296,7 +298,13 @@ function VideoCard({
     const container = containerRef.current;
     if (!container) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.intersectionRatio >= 0.3),
+      ([entry]) => {
+        const visible = entry.intersectionRatio >= 0.3;
+        setInView(visible);
+        // Leaving the viewport hands control of the embed back, so the wheel
+        // scrolls the page again once the visitor moves on.
+        if (!visible) setInteractive(false);
+      },
       { threshold: [0, 0.3] }
     );
     observer.observe(container);
@@ -309,11 +317,12 @@ function VideoCard({
     <div
       className={`work-item video-work-item${isShort ? ' shorts-item' : ''}`}
       ref={containerRef}
+      onClick={() => setInteractive(true)}
     >
       {showEmbed ? (
         <iframe
           src={embedUrl}
-          className="video-iframe"
+          className={`video-iframe${interactive ? ' video-iframe-interactive' : ''}`}
           allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           allowFullScreen
           title={`Video ${videoId}`}
@@ -343,7 +352,8 @@ function VideoCard({
 // ---------- ShortsRow -------------------------------------------------------
 // The Shorts of every category stay on ONE line: exactly 5 visible side by
 // side on desktop. Anything beyond that scrolls horizontally — via the arrow
-// buttons, the mouse wheel / trackpad, or click-and-drag on the row.
+// buttons, a trackpad swipe or Shift+wheel, or click-and-drag on the row. The
+// vertical wheel intentionally still scrolls the page, not the row.
 // ---------------------------------------------------------------------------
 function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
   const rowRef = useRef<HTMLDivElement>(null);
@@ -365,21 +375,14 @@ function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
     el.addEventListener('scroll', syncEdges, { passive: true });
     window.addEventListener('resize', syncEdges);
 
-    // Vertical wheel / trackpad gestures scroll the row sideways. Attached
-    // natively because React's onWheel listener is passive and cannot
-    // preventDefault().
-    const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-      if (el.scrollWidth <= el.clientWidth) return;
-      e.preventDefault();
-      el.scrollLeft += e.deltaY;
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-
+    // Deliberately NO wheel hijack here: mapping the vertical wheel to
+    // horizontal scrolling meant the page itself could not be scrolled while
+    // the pointer sat over a row. Horizontal input still reaches the row
+    // through the browser's own handling (trackpad two-finger swipe, tilt
+    // wheel or Shift+wheel), and the arrows and click-and-drag also work.
     return () => {
       el.removeEventListener('scroll', syncEdges);
       window.removeEventListener('resize', syncEdges);
-      el.removeEventListener('wheel', onWheel);
     };
   }, [syncEdges, ids.length]);
 
