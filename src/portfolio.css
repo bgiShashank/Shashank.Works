@@ -377,6 +377,81 @@ input:checked + .slider:before {
     transition: all var(--transition-speed) ease;
 }
 
+/* Highlighted experience badge under the About copy. inline-flex so the
+   centred text-align of .about-content keeps it centred. */
+.about-experience {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 26px;
+    padding: 10px 26px 10px 12px;
+    border-radius: 50px;
+    border: 1px solid rgba(123, 179, 232, 0.5);
+    background: linear-gradient(135deg, rgba(45, 107, 160, 0.42) 0%, rgba(18, 53, 92, 0.45) 100%);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45),
+                0 0 22px rgba(45, 107, 160, 0.35),
+                inset 0 1px 0 rgba(168, 213, 255, 0.25);
+    transition: all var(--transition-speed) ease;
+}
+
+.about-experience:hover {
+    transform: translateY(-3px);
+    border-color: var(--bright-blue);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(123, 179, 232, 0.5),
+                inset 0 1px 0 rgba(168, 213, 255, 0.35);
+}
+
+.about-experience-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.3rem;
+    line-height: 1;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(168, 213, 255, 0.28) 0%, rgba(45, 107, 160, 0.5) 100%);
+    border: 1px solid rgba(168, 213, 255, 0.45);
+    box-shadow: 0 0 14px rgba(123, 179, 232, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.about-experience-text {
+    font-size: 1rem;
+    line-height: 1.3;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.about-experience-text strong {
+    font-weight: 700;
+    color: var(--bright-blue);
+    text-shadow: 0 0 14px rgba(123, 179, 232, 0.75);
+}
+
+@media (max-width: 480px) {
+    .about-experience {
+        gap: 9px;
+        margin-top: 20px;
+        padding: 8px 18px 8px 9px;
+    }
+
+    .about-experience-icon {
+        flex-basis: 32px;
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .about-experience-text {
+        font-size: 0.86rem;
+    }
+}
+
 /* Skills Section */
 .skills-container {
     display: grid;

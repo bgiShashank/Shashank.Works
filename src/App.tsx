@@ -857,6 +857,16 @@ export default function App() {
             style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
           >
             <p>{data.about}</p>
+            {/* Experience badge, kept separate from the paragraph so it reads
+                as a standout credential rather than more body copy. */}
+            <div className="about-experience">
+              <span className="about-experience-icon" aria-hidden="true">
+                🏆
+              </span>
+              <span className="about-experience-text">
+                <strong>3+ Years</strong> of Experience
+              </span>
+            </div>
           </div>
         </section>
 
