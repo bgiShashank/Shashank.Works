@@ -61,26 +61,28 @@ body::before {
 }
 
 /* Toggle Switch Container */
-/* Just a switch in a bordered pill now that the captions are gone. */
+/* Back to the original glassy gradient panel, but squared off: a rectangle
+   instead of the rounded pill. Padding is tighter than the original because
+   the "Web Developer" / "Editor" captions are gone. */
 .toggle-container {
     margin-top: 0;
     z-index: 1000;
-    background: rgba(8, 24, 41, 0.4);
+    background: linear-gradient(135deg, rgba(18, 53, 92, 0.4) 0%, rgba(10, 31, 58, 0.3) 100%);
     backdrop-filter: blur(15px);
-    padding: 7px;
-    border-radius: 50px;
-    border: 2px solid rgba(74, 143, 199, 0.55);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45),
-                0 0 14px rgba(45, 107, 160, 0.25),
-                inset 0 1px 0 rgba(168, 213, 255, 0.18);
+    padding: 10px 14px;
+    border-radius: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 15px rgba(45, 107, 160, 0.2);
+    border: 1px solid rgba(45, 107, 160, 0.3);
     transition: all var(--transition-speed) ease;
 }
 
 .toggle-container:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(123, 179, 232, 0.35);
-    border-color: var(--highlight-blue);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(45, 107, 160, 0.3);
+    background: linear-gradient(135deg, rgba(18, 53, 92, 0.5) 0%, rgba(10, 31, 58, 0.4) 100%);
+    border-color: rgba(45, 107, 160, 0.4);
 }
 
 .toggle-wrapper {
