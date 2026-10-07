@@ -1215,6 +1215,11 @@ html {
     scroll-behavior: smooth;
     scroll-snap-type: x proximity;
     cursor: grab;
+    /* overflow-y is hidden so the horizontal scroller never grows a vertical
+       bar; the padding keeps the row's hover lift (-4px) and glow from being
+       clipped. margin-top cancels the padding so nothing shifts visually. */
+    padding-top: 8px;
+    margin-top: -8px;
     padding-bottom: 12px;
     scrollbar-width: thin;
     scrollbar-color: rgba(74, 143, 199, 0.6) transparent;
@@ -1305,6 +1310,8 @@ html {
     .videos-section .work-gallery.shorts-gallery {
         grid-auto-columns: calc((100% - 2 * 10px) / 3);
         gap: 10px;
+        padding-top: 6px;
+        margin-top: -6px;
         padding-bottom: 10px;
     }
 
