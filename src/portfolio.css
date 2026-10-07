@@ -1200,32 +1200,130 @@ html {
    cards, so these selectors carry the extra `.work-gallery` class to win
    outright, and they stay last in the file as a second safeguard.
    ------------------------------------------------------------------ */
+/* One line per category: exactly 5 cards visible side by side on desktop.
+   Anything past that scrolls sideways (arrows, wheel/trackpad, or drag). */
 .work-gallery.shorts-gallery,
 .videos-section .work-gallery.shorts-gallery {
-    grid-template-columns: repeat(5, 1fr);
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 4 * 12px) / 5);
     gap: 12px;
+    max-width: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    cursor: grab;
+    padding-bottom: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(74, 143, 199, 0.6) transparent;
+    touch-action: pan-x;
+}
+
+.work-gallery.shorts-gallery::-webkit-scrollbar {
+    height: 8px;
+}
+
+.work-gallery.shorts-gallery::-webkit-scrollbar-track {
+    background: rgba(8, 24, 41, 0.4);
+    border-radius: 4px;
+}
+
+.work-gallery.shorts-gallery::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, var(--accent-blue), var(--light-blue));
+    border-radius: 4px;
+}
+
+.work-gallery.shorts-gallery .work-item {
+    scroll-snap-align: start;
+}
+
+.shorts-gallery--dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+}
+
+.shorts-gallery--dragging .work-item {
+    pointer-events: none;
+}
+
+.shorts-row {
+    position: relative;
+}
+
+.shorts-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--bright-blue);
+    background: linear-gradient(135deg, rgba(18, 53, 92, 0.92), rgba(8, 24, 41, 0.92));
+    border: 1px solid rgba(74, 143, 199, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55),
+                0 0 14px rgba(45, 107, 160, 0.45),
+                inset 0 1px 0 rgba(168, 213, 255, 0.25);
+    transition: all var(--transition-speed) ease;
+}
+
+.shorts-nav-prev { left: -6px; }
+.shorts-nav-next { right: -6px; }
+
+.shorts-nav:hover:not(:disabled) {
+    color: #ffffff;
+    border-color: var(--bright-blue);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6),
+                0 0 22px rgba(123, 179, 232, 0.7),
+                inset 0 1px 0 rgba(168, 213, 255, 0.4);
+    transform: translateY(-50%) scale(1.08);
+}
+
+.shorts-nav:disabled {
+    opacity: 0;
+    pointer-events: none;
 }
 
 @media (max-width: 1024px) {
     .work-gallery.shorts-gallery,
     .videos-section .work-gallery.shorts-gallery {
-        grid-template-columns: repeat(4, 1fr);
+        grid-auto-columns: calc((100% - 3 * 12px) / 4);
     }
 }
 
 @media (max-width: 768px) {
     .work-gallery.shorts-gallery,
     .videos-section .work-gallery.shorts-gallery {
-        grid-template-columns: repeat(4, 1fr);
+        grid-auto-columns: calc((100% - 2 * 10px) / 3);
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+
+    .shorts-nav {
+        width: 34px;
+        height: 34px;
+        font-size: 1.25rem;
     }
 }
 
 @media (max-width: 480px) {
     .work-gallery.shorts-gallery,
     .videos-section .work-gallery.shorts-gallery {
-        grid-template-columns: repeat(4, 1fr);
+        grid-auto-columns: calc((100% - 8px) / 2);
         gap: 8px;
     }
+
+    .shorts-nav-prev { left: -2px; }
+    .shorts-nav-next { right: -2px; }
 }
 
 /* ------------------------------------------------------------------
@@ -1278,4 +1376,139 @@ body.has-custom-cursor * {
     background: rgba(123, 179, 232, 0.16);
     box-shadow: 0 0 22px rgba(123, 179, 232, 0.5),
                 inset 0 0 16px rgba(168, 213, 255, 0.18);
+}
+
+/* ------------------------------------------------------------------
+   3D strip above the "Edited Videos" heading, plus a matching 3D frame
+   around every video category.
+   ------------------------------------------------------------------ */
+.section-strip {
+    position: relative;
+    height: 14px;
+    max-width: 1200px;
+    margin: 0 auto 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(123, 179, 232, 0.55);
+    background: linear-gradient(
+        180deg,
+        rgba(168, 213, 255, 0.9) 0%,
+        rgba(74, 143, 199, 0.75) 28%,
+        rgba(18, 53, 92, 0.95) 62%,
+        rgba(8, 24, 41, 1) 100%
+    );
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.65),
+                0 0 22px rgba(45, 107, 160, 0.45),
+                inset 0 2px 0 rgba(255, 255, 255, 0.35),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.55);
+}
+
+.section-strip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    transform: translateX(-50%);
+    width: 62%;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(45, 107, 160, 0.55) 0%, transparent 70%);
+    filter: blur(3px);
+}
+
+.video-category {
+    padding: 22px 22px 26px;
+    border-radius: 18px;
+    border: 1px solid rgba(45, 107, 160, 0.4);
+    background: linear-gradient(160deg, rgba(18, 53, 92, 0.42) 0%, rgba(8, 24, 41, 0.55) 100%);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(45, 107, 160, 0.22),
+                inset 0 1px 0 rgba(168, 213, 255, 0.18),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.videos-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    max-width: 1200px;
+    margin: 0 auto 18px;
+}
+
+.autoplay-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    background: linear-gradient(135deg, rgba(18, 53, 92, 0.6), rgba(8, 24, 41, 0.6));
+    border: 1px solid rgba(45, 107, 160, 0.45);
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(168, 213, 255, 0.16);
+    transition: all var(--transition-speed) ease;
+}
+
+.autoplay-toggle:hover {
+    transform: translateY(-2px);
+    border-color: rgba(123, 179, 232, 0.6);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55),
+                0 0 18px rgba(45, 107, 160, 0.4);
+}
+
+.autoplay-toggle--on {
+    color: var(--text-light);
+    border-color: rgba(123, 179, 232, 0.55);
+}
+
+.autoplay-toggle-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+    transition: all var(--transition-speed) ease;
+}
+
+.autoplay-toggle--on .autoplay-toggle-dot {
+    background: var(--bright-blue);
+    box-shadow: 0 0 10px rgba(168, 213, 255, 0.95),
+                0 0 20px rgba(74, 143, 199, 0.6);
+}
+
+.video-work-item {
+    position: relative;
+}
+
+.video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    padding-left: 5px;
+    font-size: 1.35rem;
+    color: var(--text-light);
+    background: linear-gradient(135deg, rgba(45, 107, 160, 0.92), rgba(18, 53, 92, 0.92));
+    border: 1px solid rgba(168, 213, 255, 0.55);
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(45, 107, 160, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all var(--transition-speed) ease;
+}
+
+.video-play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7),
+                0 0 28px rgba(123, 179, 232, 0.8);
 }

@@ -129,6 +129,8 @@ const portfolioData = {
           ids: [
             'wpw9VAis2nM', // Motion Design Edit 1
             'jXuaAX2L1lM', // Motion Design Edit 2
+            'niH-9TajeeI', // Motion Design Edit 3
+            'gskhVyc9m5c', // Motion Design Edit 4
           ],
         },
         {
@@ -146,6 +148,8 @@ const portfolioData = {
           name: 'Promotional & Marketing Ads',
           isShort: true,
           ids: [
+            'twMd_fISfv4', // Promotional Ad — top-left
+            'wHRS0WFNP0w', // Promotional Ad — top-left
             '9qeoM2OAy9Y', // D2C Marketing
             'MKBacqSfGB4', // D2C Marketing 2
             'WHOBO4K7HGU', // Product Promotional ad
@@ -259,38 +263,52 @@ function Lightbox({
 // • isShort: true → 9:16 portrait aspect ratio (YouTube Shorts)
 // • isShort: false → 16:9 landscape aspect ratio (regular videos)
 // ---------------------------------------------------------------------------
-function VideoCard({ videoId, isShort = false }: { videoId: string; isShort?: boolean }) {
-  const [active, setActive] = useState(false);
+function VideoCard({
+  videoId,
+  isShort = false,
+  autoplay = true,
+}: {
+  videoId: string;
+  isShort?: boolean;
+  autoplay?: boolean;
+}) {
+  const [inView, setInView] = useState(false);
+  const [manualPlay, setManualPlay] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // YouTube thumbnails: mqdefault (320×180) works for both regular and Shorts
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
   // autoplay=1 + mute=1: required by browsers; rel=0: no related videos after playback
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1`;
+  // autoplay=1 + mute=1: required by browsers. A click-to-play embed drops
+  // mute so the visitor hears the audio.
+  const embedUrl = manualPlay
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&playsinline=1`
+    : `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1`;
+
+  // Global auto-play switched off → stop any manual playback too.
+  useEffect(() => {
+    if (!autoplay) setManualPlay(false);
+  }, [autoplay]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio >= 0.3) {
-          setActive(true);
-        } else {
-          setActive(false);
-        }
-      },
+      ([entry]) => setInView(entry.intersectionRatio >= 0.3),
       { threshold: [0, 0.3] }
     );
     observer.observe(container);
     return () => observer.disconnect();
   }, [videoId]);
 
+  const showEmbed = manualPlay || (autoplay && inView);
+
   return (
     <div
       className={`work-item video-work-item${isShort ? ' shorts-item' : ''}`}
       ref={containerRef}
     >
-      {active ? (
+      {showEmbed ? (
         <iframe
           src={embedUrl}
           className="video-iframe"
@@ -299,13 +317,137 @@ function VideoCard({ videoId, isShort = false }: { videoId: string; isShort?: bo
           title={`Video ${videoId}`}
         />
       ) : (
-        <img
-          src={thumbnailUrl}
-          alt="Video preview"
-          className="work-image"
-          loading="lazy"
-        />
+        <>
+          <img
+            src={thumbnailUrl}
+            alt="Video preview"
+            className="work-image"
+            loading="lazy"
+          />
+          <button
+            type="button"
+            className="video-play-btn"
+            onClick={() => setManualPlay(true)}
+            aria-label="Play video"
+          >
+            ▶
+          </button>
+        </>
       )}
+    </div>
+  );
+}
+
+// ---------- ShortsRow -------------------------------------------------------
+// The Shorts of every category stay on ONE line: exactly 5 visible side by
+// side on desktop. Anything beyond that scrolls horizontally — via the arrow
+// buttons, the mouse wheel / trackpad, or click-and-drag on the row.
+// ---------------------------------------------------------------------------
+function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const syncEdges = useCallback(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    setAtStart(el.scrollLeft <= 4);
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return;
+
+    syncEdges();
+    el.addEventListener('scroll', syncEdges, { passive: true });
+    window.addEventListener('resize', syncEdges);
+
+    // Vertical wheel / trackpad gestures scroll the row sideways. Attached
+    // natively because React's onWheel listener is passive and cannot
+    // preventDefault().
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      if (el.scrollWidth <= el.clientWidth) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener('scroll', syncEdges);
+      window.removeEventListener('resize', syncEdges);
+      el.removeEventListener('wheel', onWheel);
+    };
+  }, [syncEdges, ids.length]);
+
+  const page = (dir: number) => {
+    const el = rowRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.75, behavior: 'smooth' });
+  };
+
+  // Click-and-drag scrubbing.
+  const drag = useRef({ active: false, startX: 0, startLeft: 0 });
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const el = rowRef.current;
+    if (!el || el.scrollWidth <= el.clientWidth) return;
+    drag.current = { active: true, startX: e.clientX, startLeft: el.scrollLeft };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = rowRef.current;
+    if (!el || !drag.current.active) return;
+    el.scrollLeft = drag.current.startLeft - (e.clientX - drag.current.startX);
+  };
+
+  const endDrag = () => {
+    drag.current.active = false;
+    rowRef.current?.classList.remove('shorts-gallery--dragging');
+  };
+
+  const onDragStart = () => {
+    if (drag.current.active) rowRef.current?.classList.add('shorts-gallery--dragging');
+  };
+
+  return (
+    <div className="shorts-row">
+      <button
+        type="button"
+        className="shorts-nav shorts-nav-prev"
+        onClick={() => page(-1)}
+        disabled={atStart}
+        aria-label="Scroll Shorts left"
+      >
+        ‹
+      </button>
+      <div
+        className="work-gallery shorts-gallery"
+        ref={rowRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={(e) => {
+          onDragStart();
+          onPointerMove(e);
+        }}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
+        {ids.map((id) => (
+          <VideoCard key={id} videoId={id} isShort autoplay={autoplay} />
+        ))}
+      </div>
+      <button
+        type="button"
+        className="shorts-nav shorts-nav-next"
+        onClick={() => page(1)}
+        disabled={atEnd}
+        aria-label="Scroll Shorts right"
+      >
+        ›
+      </button>
     </div>
   );
 }
@@ -355,17 +497,8 @@ function WorkSection({
             scrollObserver={scrollObserver}
           />
         ))}
-        {showAll &&
-          hidden.map((src, idx) => (
-            <WorkItem
-              key={src}
-              src={src}
-              alt={`${title} ${idx + 4}`}
-              delay={(idx % 4) + 1}
-              onClick={() => onOpenLightbox(images, idx + 3)}
-              scrollObserver={scrollObserver}
-            />
-          ))}
+        {/* Images 4+ are already rendered above once `showAll` is set —
+            rendering `hidden` again here duplicated every extra tile. */}
       </div>
       {!showAll && hidden.length > 0 && (
         <div className="view-more-container">
@@ -415,6 +548,8 @@ export default function App() {
   const [isWeb, setIsWeb] = useState(false);
   const [contentVisible, setContentVisible] = useState(true);
   const [lightbox, setLightbox] = useState<LightboxState>({ images: [], index: 0, open: false });
+  // Auto-play toggle for the Edited Videos gallery (on by default).
+  const [videosAutoplay, setVideosAutoplay] = useState(true);
 
   // Shared IntersectionObserver instance
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -828,15 +963,32 @@ export default function App() {
 
                 {/* Edited Videos */}
                 <div id="edited-videos" className="work-section videos-section">
+                  <div className="section-strip" aria-hidden="true" />
                   <h3 className="work-section-title">Edited Videos</h3>
+                  <div className="videos-toolbar">
+                    <button
+                      type="button"
+                      className={`autoplay-toggle${videosAutoplay ? ' autoplay-toggle--on' : ''}`}
+                      onClick={() => setVideosAutoplay((v) => !v)}
+                      aria-pressed={videosAutoplay}
+                      title={videosAutoplay ? 'Turn auto-play off' : 'Turn auto-play on'}
+                    >
+                      <span className="autoplay-toggle-dot" />
+                      Auto-play {videosAutoplay ? 'ON' : 'OFF'}
+                    </button>
+                  </div>
                   {portfolioData.video.work.videoCategories.map((cat) => (
                     <div key={cat.name} className="video-category">
                       <h4 className="video-category-title">{cat.name}</h4>
-                      <div className={`work-gallery${cat.isShort ? ' shorts-gallery' : ''}`}>
-                        {cat.ids.map((id) => (
-                          <VideoCard key={id} videoId={id} isShort={cat.isShort} />
-                        ))}
-                      </div>
+                      {cat.isShort ? (
+                        <ShortsRow ids={cat.ids} autoplay={videosAutoplay} />
+                      ) : (
+                        <div className="work-gallery">
+                          {cat.ids.map((id) => (
+                            <VideoCard key={id} videoId={id} isShort={false} autoplay={videosAutoplay} />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
