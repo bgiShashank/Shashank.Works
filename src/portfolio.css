@@ -1535,3 +1535,119 @@ body.has-custom-cursor * {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7),
                 0 0 28px rgba(123, 179, 232, 0.8);
 }
+
+/* ------------------------------------------------------------------
+   Phones and small tablets: three cards per row for Skills and
+   Softwares I Use instead of one full-width card each, with the card
+   internals scaled down so three compact tiles fit across without the
+   section turning into a tall stack.
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+    .skills-container,
+    .software-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .skill-card {
+        padding: 16px 10px;
+        border-radius: 14px;
+    }
+
+    .skill-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .skill-icon {
+        font-size: 1.7rem;
+        margin-bottom: 8px;
+    }
+
+    .skill-card h3 {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+    }
+
+    .skill-card p {
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+
+    .skill-card .skill-cta {
+        font-size: 0.65rem;
+        margin-top: 6px;
+    }
+
+    .software-card {
+        padding: 14px 8px;
+        border-radius: 14px;
+    }
+
+    .software-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .software-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 11px;
+        font-size: 1rem;
+        margin-bottom: 9px;
+        border-width: 1px;
+    }
+
+    .software-name {
+        font-size: 0.72rem;
+        line-height: 1.3;
+    }
+
+    .software-note {
+        font-size: 0.6rem;
+        margin-top: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .skills-container,
+    .software-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .skill-card {
+        padding: 13px 7px;
+    }
+
+    .skill-icon {
+        font-size: 1.45rem;
+        margin-bottom: 6px;
+    }
+
+    .skill-card h3 {
+        font-size: 0.82rem;
+        margin-bottom: 4px;
+    }
+
+    .skill-card p {
+        font-size: 0.66rem;
+    }
+
+    .software-card {
+        padding: 11px 6px;
+    }
+
+    .software-logo {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+        margin-bottom: 7px;
+    }
+
+    .software-name {
+        font-size: 0.66rem;
+    }
+
+    .software-note {
+        font-size: 0.56rem;
+    }
+}
