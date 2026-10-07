@@ -785,21 +785,31 @@ export default function App() {
               />
             </div>
             <div className="shashank-signature-name">Shashank Vishwakarma</div>
-            {/* Plain switch — the "Web Developer" / "Editor" captions that
-                used to flank it are gone, which keeps the hero compact. The
-                accessible name now carries what those captions said. */}
-            <div className="toggle-container">
-              <div className="toggle-wrapper">
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    id="portfolio-toggle"
-                    aria-label="Switch between Web Developer and Editor"
-                    checked={!isWeb}
-                    onChange={(e) => handleToggle(e.target.checked)}
-                  />
-                  <span className="slider" />
-                </label>
+            {/* No switch: the two profiles are tapped directly and the active
+                one is highlighted. handleToggle(true) selects the Editor,
+                handleToggle(false) the Web Developer. */}
+            <div className="profile-switch">
+              <span className="profile-switch-hint">Click to switch between profile</span>
+              <div className="profile-switch-options">
+                <button
+                  type="button"
+                  className={`profile-switch-option${!isWeb ? ' is-active' : ''}`}
+                  aria-pressed={!isWeb}
+                  onClick={() => handleToggle(true)}
+                >
+                  Editor
+                </button>
+                <span className="profile-switch-sep" aria-hidden="true">
+                  -
+                </span>
+                <button
+                  type="button"
+                  className={`profile-switch-option${isWeb ? ' is-active' : ''}`}
+                  aria-pressed={isWeb}
+                  onClick={() => handleToggle(false)}
+                >
+                  Web Developer
+                </button>
               </div>
             </div>
           </div>

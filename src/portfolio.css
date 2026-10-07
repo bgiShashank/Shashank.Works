@@ -1934,3 +1934,79 @@ body.has-custom-cursor * {
         margin-bottom: 24px;
     }
 }
+
+/* ------------------------------------------------------------------
+   Profile switcher: the toggle switch is gone. The two profiles are now
+   tapped directly under a small caption, and the active one is lit up.
+   ------------------------------------------------------------------ */
+.profile-switch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.profile-switch-hint {
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    text-transform: lowercase;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.profile-switch-options {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-switch-sep {
+    color: rgba(168, 213, 255, 0.45);
+    font-weight: 600;
+}
+
+.profile-switch-option {
+    background: none;
+    border: none;
+    padding: 2px 1px 4px;
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.profile-switch-option:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-switch-option.is-active {
+    color: var(--text-light);
+    text-shadow: 0 0 14px rgba(123, 179, 232, 0.9);
+}
+
+/* Lit underline marks the selected profile. */
+.profile-switch-option.is-active::after {
+    content: '';
+    display: block;
+    height: 2px;
+    margin-top: 3px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, transparent, var(--bright-blue), transparent);
+    box-shadow: 0 0 10px rgba(123, 179, 232, 0.8);
+}
+
+@media (max-width: 480px) {
+    .profile-switch-hint {
+        font-size: 0.6rem;
+    }
+
+    .profile-switch-options {
+        gap: 8px;
+    }
+
+    .profile-switch-option {
+        font-size: 0.85rem;
+    }
+}
