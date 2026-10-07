@@ -124,6 +124,14 @@ const portfolioData = {
       videoCategories: [
         // Titles verified via YouTube oEmbed; layout verified via /shorts/ pages
         {
+          name: 'Motion Design Edits',
+          isShort: true,
+          ids: [
+            'wpw9VAis2nM', // Motion Design Edit 1
+            'jXuaAX2L1lM', // Motion Design Edit 2
+          ],
+        },
+        {
           name: 'AI & Creative Concept Shorts',
           isShort: true,
           ids: [
@@ -160,14 +168,6 @@ const portfolioData = {
           ids: [
             'nHv1w0gQtCE', // Entertainment Youtube Video
             'cFlr5yehrZA', // Entertainment Youtube Video 2
-          ],
-        },
-        {
-          name: 'Motion Design Edits',
-          isShort: true,
-          ids: [
-            'wpw9VAis2nM', // Motion Design Edit 1
-            'jXuaAX2L1lM', // Motion Design Edit 2
           ],
         },
         {

@@ -1180,7 +1180,7 @@ html {
 }
 
 /* ------------------------------------------------------------------
-   Shorts gallery: always 4 side by side (laptop and phone).
+   Shorts gallery: 5 side by side on PC, 4 on smaller screens.
 
    `.videos-section .work-gallery` (0-2-0) outranks a plain
    `.shorts-gallery` (0-1-0) and was still forcing the Shorts rows to two
@@ -1189,8 +1189,15 @@ html {
    ------------------------------------------------------------------ */
 .work-gallery.shorts-gallery,
 .videos-section .work-gallery.shorts-gallery {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
+}
+
+@media (max-width: 1024px) {
+    .work-gallery.shorts-gallery,
+    .videos-section .work-gallery.shorts-gallery {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
