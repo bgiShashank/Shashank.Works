@@ -386,7 +386,18 @@ function ShortsRow({ ids, autoplay }: { ids: string[]; autoplay: boolean }) {
   const page = (dir: number) => {
     const el = rowRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.75, behavior: 'smooth' });
+    // One column plus its gap. A "page" is however many columns the row shows
+    // at the current width (5 on desktop, 2 columns x 2 rows on phones), so
+    // paging lands on a column boundary instead of cutting a card in half.
+    const first = el.firstElementChild as HTMLElement | null;
+    const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+    const step = first ? first.getBoundingClientRect().width + gap : 0;
+    if (step <= 0) {
+      el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+      return;
+    }
+    const cols = Math.max(1, Math.round((el.clientWidth + gap) / step));
+    el.scrollBy({ left: dir * cols * step, behavior: 'smooth' });
   };
 
   // Click-and-drag scrubbing.

@@ -1323,8 +1323,13 @@ html {
 }
 
 @media (max-width: 480px) {
+    /* Phones: 2 upar / 2 neeche. Two explicit rows plus a half-width column
+       track gives a 2x2 cluster, so four Shorts are visible at once instead
+       of two; the rest still scroll in from the side, one full page (four
+       cards) at a time. */
     .work-gallery.shorts-gallery,
     .videos-section .work-gallery.shorts-gallery {
+        grid-template-rows: repeat(2, auto);
         grid-auto-columns: calc((100% - 8px) / 2);
         gap: 8px;
     }
