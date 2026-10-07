@@ -1180,17 +1180,29 @@ html {
 }
 
 /* ------------------------------------------------------------------
-   Shorts gallery: always 4 side by side (last rules on purpose so the
-   generic .work-gallery breakpoints above cannot collapse it to 1-2).
+   Shorts gallery: always 4 side by side (laptop and phone).
+
+   `.videos-section .work-gallery` (0-2-0) outranks a plain
+   `.shorts-gallery` (0-1-0) and was still forcing the Shorts rows to two
+   cards, so these selectors carry the extra `.work-gallery` class to win
+   outright, and they stay last in the file as a second safeguard.
    ------------------------------------------------------------------ */
+.work-gallery.shorts-gallery,
+.videos-section .work-gallery.shorts-gallery {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
 @media (max-width: 768px) {
-    .shorts-gallery {
+    .work-gallery.shorts-gallery,
+    .videos-section .work-gallery.shorts-gallery {
         grid-template-columns: repeat(4, 1fr);
     }
 }
 
 @media (max-width: 480px) {
-    .shorts-gallery {
+    .work-gallery.shorts-gallery,
+    .videos-section .work-gallery.shorts-gallery {
         grid-template-columns: repeat(4, 1fr);
         gap: 8px;
     }
