@@ -1781,16 +1781,19 @@ body.has-custom-cursor * {
 }
 
 /* ------------------------------------------------------------------
-   Thumbnails: far too many to stack, so they ride ONE scrollable line
-   with six visible at a time, exactly like the Shorts rows. The rest
-   come in from the side via the arrows, a trackpad swipe or drag.
+   Thumbnails: far too many to stack, so they scroll. Six are visible
+   at a time as a 2-wide, 3-tall block (2 upar, 2 middle, 2 neeche); the
+   rest come in from the side via the arrows, a trackpad swipe or drag.
+   Three explicit rows with column flow is what produces the 2x3 block,
+   and it keeps paging landing on a whole block instead of a half one.
    ------------------------------------------------------------------ */
 .work-gallery.thumbnails-gallery,
 .thumbnails-section .work-gallery.thumbnails-gallery {
     display: grid;
     grid-template-columns: none;
+    grid-template-rows: repeat(3, auto);
     grid-auto-flow: column;
-    grid-auto-columns: calc((100% - 5 * 12px) / 6);
+    grid-auto-columns: calc((100% - 12px) / 2);
     gap: 12px;
     max-width: none;
     overflow-x: auto;
@@ -1824,31 +1827,6 @@ body.has-custom-cursor * {
     scroll-snap-align: start;
 }
 
-@media (max-width: 1024px) {
-    .work-gallery.thumbnails-gallery,
-    .thumbnails-section .work-gallery.thumbnails-gallery {
-        grid-auto-columns: calc((100% - 3 * 12px) / 4);
-    }
-}
-
-@media (max-width: 768px) {
-    .work-gallery.thumbnails-gallery,
-    .thumbnails-section .work-gallery.thumbnails-gallery {
-        grid-auto-columns: calc((100% - 2 * 10px) / 3);
-        gap: 10px;
-        padding-top: 6px;
-        margin-top: -6px;
-        padding-bottom: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .work-gallery.thumbnails-gallery,
-    .thumbnails-section .work-gallery.thumbnails-gallery {
-        grid-auto-columns: calc((100% - 8px) / 2);
-        gap: 8px;
-    }
-}
 
 /* The first two banners are 1094x874 artwork; show them in their own ratio
    with `contain` so nothing is cropped. */
