@@ -441,6 +441,13 @@ input:checked + .slider:before {
     font-weight: 600;
 }
 
+.software-note {
+    color: rgba(168, 213, 255, 0.85);
+    font-size: 0.8rem;
+    margin-top: 4px;
+    letter-spacing: 0.01em;
+}
+
 /* Brand styles */
 .software-pr {
     background: linear-gradient(135deg, #2d0b59 0%, #6b11c9 100%);
@@ -454,8 +461,14 @@ input:checked + .slider:before {
     background: linear-gradient(135deg, #001e36 0%, #0a2a4f 100%);
 }
 
+/* AI tooling — teal/blue glow, intentionally NOT the orange "Ai" tile that
+   would look like Adobe Illustrator. */
 .software-ai {
-    background: linear-gradient(135deg, #2c0f00 0%, #a64d00 100%);
+    background: linear-gradient(135deg, #04252e 0%, #0b6b7a 55%, #2a5bd7 100%);
+    font-size: 1.9rem;
+    border-color: rgba(120, 230, 255, 0.28);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5),
+                0 0 18px rgba(11, 107, 122, 0.45);
 }
 
 .software-capcut { background: none; }

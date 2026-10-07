@@ -188,6 +188,9 @@ const softwareItems = [
   { key: 'ps', name: 'Adobe Photoshop', label: 'Ps' },
   { key: 'capcut', name: 'CapCut', icon: `${GITHUB_RAW}/Images/CapCut_Logo.png` },
   { key: 'picsart', name: 'Picsart', icon: `${GITHUB_RAW}/Images/PicsArt_Logo.png` },
+  // AI tooling (sparkle mark — deliberately not an "Ai" tile, which would read
+  // as Adobe Illustrator, a tool I do not use).
+  { key: 'ai', name: 'AI Tools', label: '✨', note: 'I use AI too' },
 ];
 
 const iconMap: Record<string, string> = {
@@ -745,6 +748,7 @@ export default function App() {
                     <div className={`software-logo software-${it.key}`}>{it.label}</div>
                   )}
                   <div className="software-name">{it.name}</div>
+                  {it.note && <div className="software-note">{it.note}</div>}
                 </div>
               ))}
             </div>
