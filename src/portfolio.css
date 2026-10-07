@@ -50,11 +50,11 @@ body::before {
 }
 
 /* Unique signature name above toggle */
-/* Signature name. 'Primor Stylish' is a premium font that is not on Google
-   Fonts, so it resolves only where it is installed (or installed via a
-   @font-face rule); the stack below is the fallback. */
+/* Signature name set in Helvetica (system font — no download needed).
+   Arial/system sans-serif are the near-identical fallbacks where Helvetica
+   itself is missing. */
 .shashank-signature-name {
-    font-family: 'Primor Stylish', 'PrimorStylish', 'Dharma Gothic E', 'Boomerang Script', 'Vivaldi', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 700;
     font-size: 1.4rem;
     text-transform: none;
