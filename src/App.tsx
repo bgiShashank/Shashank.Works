@@ -589,6 +589,17 @@ export default function App() {
   // Auto-play toggle for the Edited Videos gallery (on by default).
   const [videosAutoplay, setVideosAutoplay] = useState(true);
 
+  // Sliding highlight for the profile switch. Position/size are measured from
+  // the active button so the highlight glides between the two options instead
+  // of jumping instantly.
+  const switchOptionsRef = useRef<HTMLDivElement>(null);
+  const editorOptionRef = useRef<HTMLButtonElement>(null);
+  const webOptionRef = useRef<HTMLButtonElement>(null);
+  const [switchThumb, setSwitchThumb] = useState({ left: 0, width: 0 });
+  // Suppress the glide until the first measurement, so the highlight does not
+  // animate in from the corner on first paint.
+  const [thumbReady, setThumbReady] = useState(false);
+
   // Shared IntersectionObserver instance
   const observerRef = useRef<IntersectionObserver | null>(null);
   if (!observerRef.current) {
@@ -675,13 +686,43 @@ export default function App() {
     return () => window.removeEventListener('resize', update);
   }, [currentPortfolio]);
 
+  // Keep the switch highlight aligned with the active option. A ResizeObserver
+  // also re-measures on font load / width changes so the thumb never drifts.
+  useEffect(() => {
+    const wrap = switchOptionsRef.current;
+    const btn = isWeb ? webOptionRef.current : editorOptionRef.current;
+    if (!wrap || !btn) return;
+
+    const update = () => {
+      const wrapRect = wrap.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+      const borderLeft = parseFloat(getComputedStyle(wrap).borderLeftWidth) || 0;
+      setSwitchThumb({
+        left: btnRect.left - wrapRect.left - borderLeft,
+        width: btnRect.width,
+      });
+    };
+
+    update();
+    const raf = requestAnimationFrame(() => setThumbReady(true));
+    const ro = new ResizeObserver(update);
+    ro.observe(wrap);
+    ro.observe(btn);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, [isWeb]);
+
   const handleToggle = (checked: boolean) => {
     setContentVisible(false);
+    // Let the fade-out finish before swapping content, so the change reads as a
+    // smooth cross-fade rather than an instant cut.
     setTimeout(() => {
       setIsWeb(!checked);
       setCurrentPortfolio(checked ? 'video' : 'web');
       setContentVisible(true);
-    }, 200);
+    }, 300);
   };
 
   const openLightbox = useCallback((images: string[], index: number) => {
@@ -790,19 +831,27 @@ export default function App() {
                 handleToggle(false) the Web Developer. */}
             <div className="profile-switch">
               <span className="profile-switch-hint">Click to switch between profile</span>
-              <div className="profile-switch-options">
+              <div className="profile-switch-options" ref={switchOptionsRef}>
+                <span
+                  className="profile-switch-thumb"
+                  aria-hidden="true"
+                  style={{
+                    left: switchThumb.left,
+                    width: switchThumb.width,
+                    transition: thumbReady ? undefined : 'none',
+                  }}
+                />
                 <button
+                  ref={editorOptionRef}
                   type="button"
                   className={`profile-switch-option${!isWeb ? ' is-active' : ''}`}
                   aria-pressed={!isWeb}
                   onClick={() => handleToggle(true)}
                 >
-                  Editor
+                  Video Editor
                 </button>
-                <span className="profile-switch-sep" aria-hidden="true">
-                  -
-                </span>
                 <button
+                  ref={webOptionRef}
                   type="button"
                   className={`profile-switch-option${isWeb ? ' is-active' : ''}`}
                   aria-pressed={isWeb}
@@ -815,7 +864,7 @@ export default function App() {
           </div>
           <div
             className="hero-content"
-            style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
+            style={{ opacity: contentVisible ? 1 : 0, transform: contentVisible ? 'none' : 'translateY(10px)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}
           >
             <h1
               className="hero-title"
@@ -865,19 +914,22 @@ export default function App() {
           <h2 className="section-title">About Me</h2>
           <div
             className="about-content"
-            style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
+            style={{ opacity: contentVisible ? 1 : 0, transform: contentVisible ? 'none' : 'translateY(10px)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}
           >
             <p>{data.about}</p>
             {/* Experience badge, kept separate from the paragraph so it reads
-                as a standout credential rather than more body copy. */}
-            <div className="about-experience">
-              <span className="about-experience-icon" aria-hidden="true">
-                🏆
-              </span>
-              <span className="about-experience-text">
-                <strong>3+ Years</strong> of Experience
-              </span>
-            </div>
+                as a standout credential rather than more body copy. Shown for
+                the Editor profile only — not the Web Developer one. */}
+            {currentPortfolio === 'video' && (
+              <div className="about-experience">
+                <span className="about-experience-icon" aria-hidden="true">
+                  🏆
+                </span>
+                <span className="about-experience-text">
+                  <strong>3+ Years</strong> of Experience
+                </span>
+              </div>
+            )}
           </div>
         </section>
 
@@ -887,7 +939,7 @@ export default function App() {
           <div
             className="skills-container"
             id="skills-container"
-            style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
+            style={{ opacity: contentVisible ? 1 : 0, transform: contentVisible ? 'none' : 'translateY(10px)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}
           >
             {data.skills.map((skill) => {
               const isClickable = 'clickable' in skill && skill.clickable;
@@ -938,7 +990,7 @@ export default function App() {
           <div
             className={`projects-container${currentPortfolio === 'video' ? ' editor-layout' : ''}`}
             id="projects-container"
-            style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
+            style={{ opacity: contentVisible ? 1 : 0, transform: contentVisible ? 'none' : 'translateY(10px)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}
           >
             {currentPortfolio === 'web' && portfolioData.web.projects.map((project, i) => (
               <div

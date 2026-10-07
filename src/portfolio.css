@@ -332,6 +332,11 @@ input:checked + .slider:before {
     transition: all var(--transition-speed) ease;
 }
 
+/* About sits tighter under the hero (less top padding). */
+#about {
+    padding-top: 12px;
+}
+
 /* Projects/My Work section sits closer to Skills */
 #projects {
     padding-top: 20px;
@@ -367,8 +372,8 @@ input:checked + .slider:before {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
-    font-size: 1.1rem;
-    line-height: 1.8;
+    font-size: 0.95rem;
+    line-height: 1.7;
     color: rgba(255, 255, 255, 0.9);
     transition: all var(--transition-speed) ease;
 }
@@ -1953,48 +1958,62 @@ body.has-custom-cursor * {
     color: rgba(255, 255, 255, 0.55);
 }
 
+/* Single outline around BOTH options: one bordered pill that holds the two
+   profile names, with the selected one filled in. */
 .profile-switch-options {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 4px;
+    padding: 4px;
+    border: 1.5px solid rgba(123, 179, 232, 0.55);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(10, 31, 58, 0.5) 0%, rgba(6, 18, 32, 0.6) 100%);
+    box-shadow: 0 0 18px rgba(45, 107, 160, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.profile-switch-sep {
-    color: rgba(168, 213, 255, 0.45);
-    font-weight: 600;
+/* Sliding highlight that glides between the two options instead of jumping.
+   Its left/width are set inline from the active button's measured box. */
+.profile-switch-thumb {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(74, 143, 199, 0.55) 0%, rgba(18, 53, 92, 0.7) 100%);
+    box-shadow: 0 0 16px rgba(123, 179, 232, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: left 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 0;
 }
 
+/* Flat segments inside the shared outline — the border lives on the wrapper. */
 .profile-switch-option {
+    position: relative;
+    z-index: 1;
     background: none;
     border: none;
-    padding: 2px 1px 4px;
+    border-radius: 999px;
+    padding: 7px 18px 8px;
     font-family: inherit;
     font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0.02em;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    transition: all var(--transition-speed) ease;
+    transition: color var(--transition-speed) ease, text-shadow var(--transition-speed) ease;
 }
 
 .profile-switch-option:hover {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.85);
 }
 
+/* Selected option: only the text lights up — the fill is the sliding thumb. */
 .profile-switch-option.is-active {
     color: var(--text-light);
     text-shadow: 0 0 14px rgba(123, 179, 232, 0.9);
-}
-
-/* Lit underline marks the selected profile. */
-.profile-switch-option.is-active::after {
-    content: '';
-    display: block;
-    height: 2px;
-    margin-top: 3px;
-    border-radius: 1px;
-    background: linear-gradient(90deg, transparent, var(--bright-blue), transparent);
-    box-shadow: 0 0 10px rgba(123, 179, 232, 0.8);
 }
 
 @media (max-width: 480px) {
@@ -2003,10 +2022,17 @@ body.has-custom-cursor * {
     }
 
     .profile-switch-options {
-        gap: 8px;
+        gap: 3px;
+        padding: 3px;
+    }
+
+    .profile-switch-thumb {
+        top: 3px;
+        bottom: 3px;
     }
 
     .profile-switch-option {
         font-size: 0.85rem;
+        padding: 6px 12px 7px;
     }
 }
