@@ -498,7 +498,10 @@ function WorkSection({
 
   return (
     <div
-      className={`work-section${isThumbnails ? ' thumbnails-section' : ''}`}
+      // `work-section-<title>` gives each gallery a semantic hook (e.g.
+      // `.work-section-logos` vs `.work-section-banners`) so their mobile
+      // layouts can differ without depending on child order.
+      className={`work-section${isThumbnails ? ' thumbnails-section' : ''} work-section-${title.toLowerCase().replace(/\s+/g, '-')}`}
       ref={sectionRef}
     >
       <h3 className="work-section-title">{title}</h3>

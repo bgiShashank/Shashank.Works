@@ -1651,3 +1651,67 @@ body.has-custom-cursor * {
         font-size: 0.56rem;
     }
 }
+
+/* ------------------------------------------------------------------
+   Phones and small tablets: Logos, Banners and Thumbnails were each
+   dropping to one full-width tile per row, which blew the wide banners
+   up into huge squares. They now pack several tiles per row, sized to
+   suit each gallery's real aspect ratio.
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+    /* Logos are square marks: three across. */
+    .work-section-logos .work-gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    /* Banners are wide artwork: two across, and no longer forced square. */
+    .work-section-banners .work-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .work-section-banners .work-item {
+        aspect-ratio: 16 / 9;
+    }
+
+    /* Thumbnails are 16:9 artwork: three across. */
+    .thumbnails-section .work-gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .work-section-logos .work-section-title,
+    .work-section-banners .work-section-title,
+    .thumbnails-section .work-section-title {
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+    }
+
+    .work-section-logos .work-item:hover,
+    .work-section-banners .work-item:hover,
+    .thumbnails-section .work-item:hover {
+        transform: translateY(-3px);
+    }
+}
+
+@media (max-width: 480px) {
+    .work-section-logos .work-gallery,
+    .work-section-banners .work-gallery,
+    .thumbnails-section .work-gallery {
+        gap: 8px;
+    }
+
+    /* Thumbnails sit tightest of the three, so they drop to two across on
+       the narrowest phones to stay legible. */
+    .thumbnails-section .work-gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .work-section-logos .work-section-title,
+    .work-section-banners .work-section-title,
+    .thumbnails-section .work-section-title {
+        font-size: 1.2rem;
+        margin-bottom: 13px;
+    }
+}
