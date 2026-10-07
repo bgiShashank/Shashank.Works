@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './portfolio.css';
-import BackgroundArt from './BackgroundArt';
 import CustomCursor from './CustomCursor';
 import ClickBubbles from './ClickBubbles';
-import Underwater3DEffects from './Underwater3DEffects';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com/bgiShashank/Shashank.Works/main';
 
@@ -570,9 +568,7 @@ export default function App() {
 
   return (
     <>
-      {/* Ambient art layers (doodle constellation, custom cursor, click bubbles) */}
-      <BackgroundArt />
-      <Underwater3DEffects />
+      {/* Ambient layers (custom cursor, click bubbles) */}
       <CustomCursor />
       <ClickBubbles />
       <div className="container" id="main-container">
