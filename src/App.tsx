@@ -785,39 +785,21 @@ export default function App() {
               />
             </div>
             <div className="shashank-signature-name">Shashank Vishwakarma</div>
+            {/* Plain switch — the "Web Developer" / "Editor" captions that
+                used to flank it are gone, which keeps the hero compact. The
+                accessible name now carries what those captions said. */}
             <div className="toggle-container">
               <div className="toggle-wrapper">
-                <span
-                  className="toggle-label"
-                  id="left-label"
-                  style={{
-                    color: isWeb ? 'var(--text-light)' : 'rgba(255, 255, 255, 0.5)',
-                    textShadow: isWeb ? '0 0 14px rgba(123, 179, 232, 0.85)' : 'none',
-                    opacity: isWeb ? 1 : 0.85,
-                  }}
-                >
-                  Web Developer
-                </span>
                 <label className="toggle-switch">
                   <input
                     type="checkbox"
                     id="portfolio-toggle"
+                    aria-label="Switch between Web Developer and Editor"
                     checked={!isWeb}
                     onChange={(e) => handleToggle(e.target.checked)}
                   />
                   <span className="slider" />
                 </label>
-                <span
-                  className="toggle-label"
-                  id="right-label"
-                  style={{
-                    color: !isWeb ? 'var(--text-light)' : 'rgba(255, 255, 255, 0.5)',
-                    textShadow: !isWeb ? '0 0 14px rgba(123, 179, 232, 0.85)' : 'none',
-                    opacity: !isWeb ? 1 : 0.85,
-                  }}
-                >
-                  Editor
-                </span>
               </div>
             </div>
           </div>
