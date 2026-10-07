@@ -147,12 +147,14 @@ const portfolioData = {
         {
           name: 'Promotional & Marketing Ads',
           isShort: true,
+          // Shorts render on ONE line with 5 visible, so index 0/1 are the
+          // top-left slots and index 3/4 are the top-right slots.
           ids: [
-            'twMd_fISfv4', // Promotional Ad — top-left
-            'wHRS0WFNP0w', // Promotional Ad — top-left
-            '9qeoM2OAy9Y', // D2C Marketing
-            'MKBacqSfGB4', // D2C Marketing 2
+            'twMd_fISfv4', // Promotional Ad - top-left
+            'wHRS0WFNP0w', // Promotional Ad - top-left
             'WHOBO4K7HGU', // Product Promotional ad
+            '9qeoM2OAy9Y', // D2C Marketing - top-right
+            'MKBacqSfGB4', // D2C Marketing 2 - top-right
             'KnwdLdw6jW8', // Promotional Ad 1
             '3sVzGlPYe4g', // Trading promotional 3
           ],
