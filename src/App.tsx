@@ -1129,33 +1129,7 @@ export default function App() {
 
             {currentPortfolio === 'video' && (
               <>
-                {/* Logos + Banners row */}
-                <div className="work-sections-row">
-                  <WorkSection
-                    title="Logos"
-                    images={logoImages}
-                    onOpenLightbox={openLightbox}
-                    scrollObserver={scrollObserver}
-                  />
-                  <WorkSection
-                    title="Banners"
-                    images={portfolioData.video.work.banners}
-                    onOpenLightbox={openLightbox}
-                    scrollObserver={scrollObserver}
-                  />
-                </div>
-
-                {/* Thumbnails */}
-                <WorkSection
-                  title="Thumbnails"
-                  images={portfolioData.video.work.thumbnails}
-                  isThumbnails
-                  scrollAll
-                  onOpenLightbox={openLightbox}
-                  scrollObserver={scrollObserver}
-                />
-
-                {/* Edited Videos */}
+                {/* Edited Videos (first so the newest edits lead the work showcase) */}
                 <div id="edited-videos" className="work-section videos-section">
                   <div className="section-strip" aria-hidden="true" />
                   <h3 className="work-section-title">Edited Videos</h3>
@@ -1194,6 +1168,33 @@ export default function App() {
                     </div>
                   ))}
                 </div>
+
+                {/* Graphics work sits below the video categories, under the
+                    "Advance level edit" block, in this order: Logos + Banners,
+                    then Thumbnails. */}
+                <div className="work-sections-row">
+                  <WorkSection
+                    title="Logos"
+                    images={logoImages}
+                    onOpenLightbox={openLightbox}
+                    scrollObserver={scrollObserver}
+                  />
+                  <WorkSection
+                    title="Banners"
+                    images={portfolioData.video.work.banners}
+                    onOpenLightbox={openLightbox}
+                    scrollObserver={scrollObserver}
+                  />
+                </div>
+
+                <WorkSection
+                  title="Thumbnails"
+                  images={portfolioData.video.work.thumbnails}
+                  isThumbnails
+                  scrollAll
+                  onOpenLightbox={openLightbox}
+                  scrollObserver={scrollObserver}
+                />
               </>
             )}
           </div>
