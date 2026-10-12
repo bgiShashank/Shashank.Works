@@ -172,8 +172,18 @@ const portfolioData = {
           name: 'Entertainment Videos',
           isShort: false,
           ids: [
+            'VokXkZEvniU', // Chellenge video Sample (newest — stays on top)
+            '86AnM-jaQXs', // I Survived 50 Hours Dumpster Diving Edit
             'nHv1w0gQtCE', // Entertainment Youtube Video
             'cFlr5yehrZA', // Entertainment Youtube Video 2
+          ],
+        },
+        {
+          name: 'Gaming edits',
+          isShort: false,
+          ids: [
+            'TLdTOAFCg84', // Gaming intro edit 1
+            '9na12oQYlig', // High impact gaming intro edit
           ],
         },
         {
