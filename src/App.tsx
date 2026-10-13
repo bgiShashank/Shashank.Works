@@ -164,8 +164,8 @@ const portfolioData = {
           name: 'Gaming edits',
           isShort: false,
           ids: [
-            'TLdTOAFCg84', // Gaming intro edit 1
-            '9na12oQYlig', // High impact gaming intro edit
+            'CB6zy9vwPyA', // Gaming intro edit 1
+            '0z_jLF1iais', // High impact gaming edit 1
           ],
         },
         {
@@ -173,6 +173,7 @@ const portfolioData = {
           isShort: false,
           ids: [
             '5Snos7GGpUA', // Advance level edit
+            'i6zi_wPFv4k', // SaaS Promo Edit
           ],
         },
         {
@@ -189,7 +190,7 @@ const portfolioData = {
           isShort: false,
           ids: [
             'VokXkZEvniU', // Chellenge video Sample (newest — stays on top)
-            '86AnM-jaQXs', // I Survived 50 Hours Dumpster Diving Edit
+            'pYqlZlDalgA', // Chellenge video edit
             'nHv1w0gQtCE', // Entertainment Youtube Video
             'cFlr5yehrZA', // Entertainment Youtube Video 2
           ],
