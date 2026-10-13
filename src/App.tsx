@@ -370,9 +370,6 @@ function VideoCard({
 }) {
   const [inView, setInView] = useState(false);
   const [manualPlay, setManualPlay] = useState(false);
-  // An ambient preview (auto-play on, muted) can be stopped with a click.
-  // Scrolling away clears this, so it previews again on the next pass.
-  const [stopped, setStopped] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // YouTube thumbnails: mqdefault (320×180) works for both regular and Shorts
@@ -393,11 +390,7 @@ function VideoCard({
     if (!container) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const visible = entry.intersectionRatio >= 0.3;
-        setInView(visible);
-        // Leaving the viewport clears the manual stop, so the preview plays
-        // again on the next pass and never stays stuck on the thumbnail.
-        if (!visible) setStopped(false);
+        setInView(entry.intersectionRatio >= 0.3);
       },
       { threshold: [0, 0.3] }
     );
@@ -405,34 +398,19 @@ function VideoCard({
     return () => observer.disconnect();
   }, [videoId]);
 
-  const showEmbed = !stopped && (manualPlay || (autoplay && inView));
-
-  const handleCardClick = () => {
-    // The whole card is one play/stop toggle: click a preview to stop it, click
-    // the thumbnail it leaves behind to play it again (with sound). The embed
-    // itself stays pointer-events: none, so hovering a video never swallows
-    // the mouse wheel — the live player is reached through the ▶ button.
-    if (!showEmbed) {
-      setStopped(false);
-      setManualPlay(true);
-      return;
-    }
-    if (!manualPlay) setStopped(true);
-  };
+  const showEmbed = manualPlay || (autoplay && inView);
 
   return (
     <div
       className={`work-item video-work-item${isShort ? ' shorts-item' : ''}`}
       ref={containerRef}
-      onClick={handleCardClick}
     >
       {showEmbed ? (
         <iframe
           src={embedUrl}
-          // A video the visitor started themselves (▶) plays with sound, so its
-          // player is live right away: one click on it pauses, seeks or sets
-          // the volume. Ambient auto-play previews stay click-through instead.
-          className={`video-iframe${manualPlay ? ' video-iframe-interactive' : ''}`}
+          // A plain, fully interactive player: clicking the video pauses or
+          // plays it, and its own control bar handles seeking and volume.
+          className="video-iframe"
           allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           allowFullScreen
           title={`Video ${videoId}`}
@@ -449,10 +427,7 @@ function VideoCard({
           <button
             type="button"
             className="video-play-btn"
-            onClick={() => {
-              setStopped(false);
-              setManualPlay(true);
-            }}
+            onClick={() => setManualPlay(true)}
             aria-label="Play video"
           >
             ▶

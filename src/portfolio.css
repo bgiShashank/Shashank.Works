@@ -899,14 +899,10 @@ input:checked + .slider:before {
     height: 100%;
     border: none;
     display: block;
-    /* A live YouTube embed captures the wheel, which trapped page scrolling
-       for anyone whose pointer sat over a video. Ambient previews therefore
-       stay click-through — clicking the card stops one — and only a video
-       started with ▶ gets `.video-iframe-interactive`. */
-    pointer-events: none;
-}
-
-.video-iframe-interactive {
+    /* The embed is a real player, exactly like a plain YouTube embed: clicking
+       the video pauses or plays it and its control bar works. Hovering a
+       cross-origin frame stops this document receiving pointermove, which is
+       what the custom-cursor fallback below handles. */
     pointer-events: auto;
 }
 
@@ -1474,17 +1470,23 @@ body.has-custom-cursor * {
 
 /* A cross-origin embed (the YouTube players) sends this document no
    pointermove while the pointer is inside it, so the custom dot/ring would
-   freeze at the video's edge — and because `cursor: none` also lands on the
-   iframe element, no usable pointer was left over a playing video at all.
-   While the pointer is on a live player the area goes back to the native
-   cursor and the custom layers step aside. */
-body.has-custom-cursor:has(.video-iframe:hover) .video-work-item,
-body.has-custom-cursor:has(.video-iframe:hover) .video-work-item * {
+   freeze at the video's edge while `cursor: none` also hid the pointer on the
+   frame itself. Video cards therefore keep the native cursor, and the custom
+   layers step aside while the pointer is on one. `.cursor-over-video` is
+   toggled from the pointer stream in CustomCursor rather than from the
+   frame's hover state, which browsers do not report reliably. */
+body.has-custom-cursor .video-work-item,
+body.has-custom-cursor .video-work-item * {
     cursor: auto !important;
 }
 
-body.has-custom-cursor:has(.video-iframe:hover) .cursor-dot,
-body.has-custom-cursor:has(.video-iframe:hover) .cursor-ring {
+/* The ▶ button stays a button, even inside a video card. */
+body.has-custom-cursor .video-play-btn {
+    cursor: pointer !important;
+}
+
+body.cursor-over-video .cursor-dot,
+body.cursor-over-video .cursor-ring {
     opacity: 0 !important;
 }
 

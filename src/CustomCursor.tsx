@@ -30,6 +30,19 @@ export default function CustomCursor() {
     let shown = false;
     let raf = 0;
 
+    // A video card can hold a cross-origin embed, which stops reporting pointer
+    // movement to this document: the dot and ring would freeze at the frame's
+    // edge. While the pointer is over one, the stylesheet hands the area back to
+    // the native cursor and hides these layers, so this flag has to be right.
+    // elementFromPoint (rather than only the event target) keeps it right when
+    // the page scrolls under a still pointer, which fires no pointer events.
+    const syncVideoHover = (x: number, y: number) => {
+      const under = document.elementFromPoint(x, y);
+      document.body.classList.toggle('cursor-over-video', Boolean(under?.closest?.('.video-work-item')));
+    };
+
+    const onViewportChange = () => syncVideoHover(targetX, targetY);
+
     const onMove = (e: PointerEvent) => {
       targetX = e.clientX;
       targetY = e.clientY;
@@ -45,12 +58,14 @@ export default function CustomCursor() {
         'a, button, input, textarea, select, label, [role="button"], .toggle-switch, .work-item, .skill-card, .software-card, .web-project-card, .nav-link, .contact-btn'
       );
       ring.classList.toggle('cursor-ring--active', Boolean(interactive));
+      syncVideoHover(targetX, targetY);
     };
 
     const onLeave = () => {
       shown = false;
       dot.style.opacity = '0';
       ring.style.opacity = '0';
+      document.body.classList.remove('cursor-over-video');
     };
 
     const loop = () => {
@@ -64,14 +79,19 @@ export default function CustomCursor() {
     };
 
     window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('scroll', onViewportChange, { passive: true });
+    window.addEventListener('wheel', onViewportChange, { passive: true });
     document.documentElement.addEventListener('pointerleave', onLeave);
     raf = requestAnimationFrame(loop);
 
     return () => {
       window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('scroll', onViewportChange);
+      window.removeEventListener('wheel', onViewportChange);
       document.documentElement.removeEventListener('pointerleave', onLeave);
       cancelAnimationFrame(raf);
       document.body.classList.remove('has-custom-cursor');
+      document.body.classList.remove('cursor-over-video');
     };
   }, []);
 
