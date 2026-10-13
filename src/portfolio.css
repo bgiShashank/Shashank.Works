@@ -900,9 +900,9 @@ input:checked + .slider:before {
     border: none;
     display: block;
     /* A live YouTube embed captures the wheel, which trapped page scrolling
-       for anyone whose pointer sat over a video. The embed stays click-through
-       until the card is clicked, and `.video-iframe-interactive` then hands
-       control to the player. */
+       for anyone whose pointer sat over a video. Ambient previews therefore
+       stay click-through — clicking the card stops one — and only a video
+       started with ▶ gets `.video-iframe-interactive`. */
     pointer-events: none;
 }
 
@@ -1335,6 +1335,19 @@ html {
     touch-action: pan-x pan-y;
 }
 
+/* Desktop shows five slots, so a category with only four cards (Motion Design
+   Edits) used to stop ~20% short of the right edge. `shorts-gallery-fill`
+   keeps the cards at their normal width and hands that leftover space to the
+   gaps between them, so the row reaches the right edge with no dead space.
+   Narrower widths already fit their own card count exactly. */
+@media (min-width: 1025px) {
+    .work-gallery.shorts-gallery.shorts-gallery-fill,
+    .videos-section .work-gallery.shorts-gallery.shorts-gallery-fill {
+        justify-content: space-between;
+        overflow-x: hidden;
+    }
+}
+
 .work-gallery.shorts-gallery::-webkit-scrollbar {
     height: 8px;
 }
@@ -1457,6 +1470,22 @@ html {
 body.has-custom-cursor,
 body.has-custom-cursor * {
     cursor: none !important;
+}
+
+/* A cross-origin embed (the YouTube players) sends this document no
+   pointermove while the pointer is inside it, so the custom dot/ring would
+   freeze at the video's edge — and because `cursor: none` also lands on the
+   iframe element, no usable pointer was left over a playing video at all.
+   While the pointer is on a live player the area goes back to the native
+   cursor and the custom layers step aside. */
+body.has-custom-cursor:has(.video-iframe:hover) .video-work-item,
+body.has-custom-cursor:has(.video-iframe:hover) .video-work-item * {
+    cursor: auto !important;
+}
+
+body.has-custom-cursor:has(.video-iframe:hover) .cursor-dot,
+body.has-custom-cursor:has(.video-iframe:hover) .cursor-ring {
+    opacity: 0 !important;
 }
 
 .cursor-dot,

@@ -159,6 +159,22 @@ const portfolioData = {
             '3sVzGlPYe4g', // Trading promotional 3
           ],
         },
+        // Gaming edits + Advance level edit sit directly above the explainers.
+        {
+          name: 'Gaming edits',
+          isShort: false,
+          ids: [
+            'TLdTOAFCg84', // Gaming intro edit 1
+            '9na12oQYlig', // High impact gaming intro edit
+          ],
+        },
+        {
+          name: 'Advance level edit',
+          isShort: false,
+          ids: [
+            '5Snos7GGpUA', // Advance level edit
+          ],
+        },
         {
           name: 'Explainers & Educational Edits',
           isShort: false,
@@ -176,21 +192,6 @@ const portfolioData = {
             '86AnM-jaQXs', // I Survived 50 Hours Dumpster Diving Edit
             'nHv1w0gQtCE', // Entertainment Youtube Video
             'cFlr5yehrZA', // Entertainment Youtube Video 2
-          ],
-        },
-        {
-          name: 'Gaming edits',
-          isShort: false,
-          ids: [
-            'TLdTOAFCg84', // Gaming intro edit 1
-            '9na12oQYlig', // High impact gaming intro edit
-          ],
-        },
-        {
-          name: 'Advance level edit',
-          isShort: false,
-          ids: [
-            '5Snos7GGpUA', // Advance level edit
           ],
         },
       ],
@@ -368,9 +369,9 @@ function VideoCard({
 }) {
   const [inView, setInView] = useState(false);
   const [manualPlay, setManualPlay] = useState(false);
-  // The embed keeps pointer-events: none until the visitor clicks the card, so
-  // a YouTube iframe cannot swallow the wheel and trap page scrolling.
-  const [interactive, setInteractive] = useState(false);
+  // An ambient preview (auto-play on, muted) can be stopped with a click.
+  // Scrolling away clears this, so it previews again on the next pass.
+  const [stopped, setStopped] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // YouTube thumbnails: mqdefault (320×180) works for both regular and Shorts
@@ -393,9 +394,9 @@ function VideoCard({
       ([entry]) => {
         const visible = entry.intersectionRatio >= 0.3;
         setInView(visible);
-        // Leaving the viewport hands control of the embed back, so the wheel
-        // scrolls the page again once the visitor moves on.
-        if (!visible) setInteractive(false);
+        // Leaving the viewport clears the manual stop, so the preview plays
+        // again on the next pass and never stays stuck on the thumbnail.
+        if (!visible) setStopped(false);
       },
       { threshold: [0, 0.3] }
     );
@@ -403,18 +404,34 @@ function VideoCard({
     return () => observer.disconnect();
   }, [videoId]);
 
-  const showEmbed = manualPlay || (autoplay && inView);
+  const showEmbed = !stopped && (manualPlay || (autoplay && inView));
+
+  const handleCardClick = () => {
+    // The whole card is one play/stop toggle: click a preview to stop it, click
+    // the thumbnail it leaves behind to play it again (with sound). The embed
+    // itself stays pointer-events: none, so hovering a video never swallows
+    // the mouse wheel — the live player is reached through the ▶ button.
+    if (!showEmbed) {
+      setStopped(false);
+      setManualPlay(true);
+      return;
+    }
+    if (!manualPlay) setStopped(true);
+  };
 
   return (
     <div
       className={`work-item video-work-item${isShort ? ' shorts-item' : ''}`}
       ref={containerRef}
-      onClick={() => setInteractive(true)}
+      onClick={handleCardClick}
     >
       {showEmbed ? (
         <iframe
           src={embedUrl}
-          className={`video-iframe${interactive ? ' video-iframe-interactive' : ''}`}
+          // A video the visitor started themselves (▶) plays with sound, so its
+          // player is live right away: one click on it pauses, seeks or sets
+          // the volume. Ambient auto-play previews stay click-through instead.
+          className={`video-iframe${manualPlay ? ' video-iframe-interactive' : ''}`}
           allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           allowFullScreen
           title={`Video ${videoId}`}
@@ -431,7 +448,10 @@ function VideoCard({
           <button
             type="button"
             className="video-play-btn"
-            onClick={() => setManualPlay(true)}
+            onClick={() => {
+              setStopped(false);
+              setManualPlay(true);
+            }}
             aria-label="Play video"
           >
             ▶
@@ -1150,7 +1170,11 @@ export default function App() {
                       <h4 className="video-category-title">{cat.name}</h4>
                       {cat.isShort ? (
                         <ScrollRow
-                          className="shorts-gallery"
+                          // A category with fewer cards than the desktop row's
+                          // five slots (Motion Design Edits has four) widens the
+                          // gaps between its cards to fill the rest of the row,
+                          // instead of leaving dead space on the right.
+                          className={`shorts-gallery${cat.ids.length < 5 ? ' shorts-gallery-fill' : ''}`}
                           count={cat.ids.length}
                           label={cat.name}
                         >
