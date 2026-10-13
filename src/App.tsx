@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './portfolio.css';
 import CustomCursor from './CustomCursor';
+import Backdrop from './Backdrop';
 import ClickBubbles from './ClickBubbles';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com/bgiShashank/Shashank.Works/main';
@@ -874,7 +875,8 @@ export default function App() {
 
   return (
     <>
-      {/* Ambient layers (custom cursor, click bubbles) */}
+      {/* Ambient layers (backdrop, custom cursor, click bubbles) */}
+      <Backdrop />
       <CustomCursor />
       <ClickBubbles />
       <div className="container" id="main-container">
@@ -966,8 +968,11 @@ export default function App() {
             <p className="hero-subtitle" id="hero-subtitle">
               {data.subtitle}
             </p>
-            <div className="hero-actions" id="hero-actions">
-              {currentPortfolio === 'web' ? (
+            {/* The Editor profile has no hero buttons any more: its Resume
+                sits next to the experience badge in About, and the old
+                Portfolio (Drive) button is gone. */}
+            {currentPortfolio === 'web' && (
+              <div className="hero-actions" id="hero-actions">
                 <a
                   href={`${GITHUB_RAW}/Shashank_Resume.pdf`}
                   target="_blank"
@@ -976,27 +981,8 @@ export default function App() {
                 >
                   Resume
                 </a>
-              ) : (
-                <>
-                  <a
-                    href="https://drive.google.com/drive/folders/1y4DlAmqN2YmXofMwYt_-uYcokwjaMr0E?usp=sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="contact-btn hero-action-btn"
-                  >
-                    Portfolio
-                  </a>
-                  <a
-                    href={`${GITHUB_RAW}/Editor_Shashank_Resume.pdf`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="contact-btn hero-action-btn"
-                  >
-                    Resume
-                  </a>
-                </>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -1008,17 +994,28 @@ export default function App() {
             style={{ opacity: contentVisible ? 1 : 0, transform: contentVisible ? 'none' : 'translateY(10px)', transition: 'opacity 0.3s ease, transform 0.3s ease' }}
           >
             <p>{data.about}</p>
-            {/* Experience badge, kept separate from the paragraph so it reads
-                as a standout credential rather than more body copy. Shown for
-                the Editor profile only — not the Web Developer one. */}
+            {/* Experience badge with the Editor Resume beside it, kept
+                separate from the paragraph so it reads as a standout
+                credential rather than more body copy. Shown for the Editor
+                profile only — not the Web Developer one. */}
             {currentPortfolio === 'video' && (
-              <div className="about-experience">
-                <span className="about-experience-icon" aria-hidden="true">
-                  🏆
-                </span>
-                <span className="about-experience-text">
-                  <strong>3+ Years</strong> of Experience
-                </span>
+              <div className="about-experience-row">
+                <div className="about-experience">
+                  <span className="about-experience-icon" aria-hidden="true">
+                    🏆
+                  </span>
+                  <span className="about-experience-text">
+                    <strong>3+ Years</strong> of Experience
+                  </span>
+                </div>
+                <a
+                  href={`${GITHUB_RAW}/Editor_Shashank_Resume.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-btn about-resume-btn"
+                >
+                  Resume
+                </a>
               </div>
             )}
           </div>
