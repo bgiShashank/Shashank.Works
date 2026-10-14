@@ -6,6 +6,34 @@ import ClickBubbles from './ClickBubbles';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com/bgiShashank/Shashank.Works/main';
 
+// Primary navigation. Kept in one place so the links, their display labels and
+// the active-section tracker all stay in sync.
+const NAV_ITEMS = [
+  { href: '#home', label: 'Home' },
+  { href: '#about', label: 'About' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#contact', label: 'Contact' },
+] as const;
+
+// The site's motif: the classic bat emblem (scalloped wings, twin ears) as a
+// single path. The viewBox is cropped tight to the path with even padding, and
+// the path keeps the source's own vertical offset, so the mark above the name
+// and the mark in the footer draw the exact same shape.
+const BAT_VIEWBOX = '51.56 40.13 896.89 456.43';
+const BAT_PATH =
+  'M687.104,557.465c0,0,54.646,62.929,13.257,110.944c-41.403,48.023-112.592,33.119-129.153,13.247c-16.563-19.868-19.863-149.017-19.863-149.017l-33.125,61.262h-36.425l-33.123-61.262c0,0-3.304,129.149-19.863,149.017c-16.562,19.872-87.752,34.776-129.156-13.247c-41.387-48.015,13.244-110.944,13.244-110.944S59.562,620.395,59.562,764.439c0,144.057,175.521,190.42,175.521,190.42c-24.843-16.559-49.684-86.104,6.621-104.309c56.29-18.221,105.974,41.385,105.974,41.385s3.12-33.896,54.631-36.428C470.195,852.193,500,973.07,500,973.07s29.805-120.877,97.691-117.563c51.51,2.531,54.646,36.428,54.646,36.428s49.668-59.605,105.976-41.385c56.289,18.205,31.462,87.75,6.621,104.309c0,0,175.521-46.363,175.521-190.42C940.454,620.395,687.105,557.465,687.104,557.465';
+
+/** The bat mark. Decorative everywhere it is used, so it is always hidden
+ * from assistive tech. */
+function BatEmblem({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox={BAT_VIEWBOX} aria-hidden="true" focusable="false">
+      <path d={BAT_PATH} transform="translate(0,-484.51314)" />
+    </svg>
+  );
+}
+
 const portfolioData = {
   web: {
     title: 'Web Developer',
@@ -62,8 +90,6 @@ const portfolioData = {
       "I'm a skilled video editor and graphics designer with a passion for visual storytelling. I create engaging content including logos, banners, thumbnails, overlays, and professional video edits.",
     contact: {
       email: 'business.shashank3@gmail.com',
-      freelancer: 'https://www.freelancer.in/u/shashank307494',
-      fiverr: 'https://www.fiverr.com/meeshank_0807',
       instagram: 'https://www.instagram.com/31_03_shashank?igsh=aDM2cGY5cjNlbnNn',
     },
     skills: [
@@ -218,8 +244,6 @@ const iconMap: Record<string, string> = {
   LinkedIn: `${GITHUB_RAW}/Images/linkedin.svg`,
   GitHub: `${GITHUB_RAW}/Images/Github_logo.png`,
   Instagram: `${GITHUB_RAW}/Images/Instagram_logo.png`,
-  Fiverr: `${GITHUB_RAW}/Images/Fiverr_logo.png`,
-  Freelancer: `${GITHUB_RAW}/Images/Freelancer_logo.png`,
 };
 
 // ---------- FadeInImage ----------
@@ -679,6 +703,10 @@ export default function App() {
   const [lightbox, setLightbox] = useState<LightboxState>({ images: [], index: 0, open: false });
   // Auto-play toggle for the Edited Videos gallery (on by default).
   const [videosAutoplay, setVideosAutoplay] = useState(true);
+  // Dock nav: which section is currently in view, and how far the page has
+  // scrolled (drives the progress hairline on the dock).
+  const [activeSection, setActiveSection] = useState<string>('#home');
+  const [navProgress, setNavProgress] = useState(0);
 
   // Sliding highlight for the profile switch. Position/size are measured from
   // the active button so the highlight glides between the two options instead
@@ -836,6 +864,41 @@ export default function App() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Track the in-view section and scroll progress for the sticky nav. Scroll
+  // and resize are throttled to one update per animation frame.
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setNavProgress(scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0);
+
+      // The section whose top has most recently crossed the upper third of the
+      // viewport is the active one.
+      const marker = window.innerHeight * 0.35;
+      let current: string = NAV_ITEMS[0].href;
+      for (const item of NAV_ITEMS) {
+        const el = document.getElementById(item.href.slice(1));
+        if (el && el.getBoundingClientRect().top <= marker) current = item.href;
+      }
+      setActiveSection(current);
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
@@ -846,16 +909,15 @@ export default function App() {
 
   const data = portfolioData[currentPortfolio];
 
-  // Build contact links
+  // Build contact links. LinkedIn belongs to the Web Developer profile only —
+  // the Editor profile drops it. Fiverr and Freelancer were removed from both.
   const webContact = portfolioData.web.contact;
   const videoContact = portfolioData.video.contact;
   const mergedContact = {
     email: webContact.email || videoContact.email,
-    linkedin: 'linkedin' in webContact ? webContact.linkedin : undefined,
+    linkedin: currentPortfolio === 'web' ? webContact.linkedin : undefined,
     github: 'github' in webContact ? webContact.github : undefined,
     instagram: webContact.instagram || videoContact.instagram,
-    fiverr: 'fiverr' in videoContact ? videoContact.fiverr : undefined,
-    freelancer: 'freelancer' in videoContact ? videoContact.freelancer : undefined,
   };
 
   const contactLinks = [
@@ -863,8 +925,6 @@ export default function App() {
     mergedContact.linkedin ? { href: mergedContact.linkedin, label: 'LinkedIn', external: true } : null,
     mergedContact.github ? { href: mergedContact.github, label: 'GitHub', external: true } : null,
     mergedContact.instagram ? { href: mergedContact.instagram, label: 'Instagram', external: true } : null,
-    mergedContact.fiverr ? { href: mergedContact.fiverr, label: 'Fiverr', external: true } : null,
-    mergedContact.freelancer ? { href: mergedContact.freelancer, label: 'Freelancer', external: true } : null,
   ].filter(Boolean) as { href: string; label: string; external: boolean }[];
 
   // Logo images: reordered (original script moves first 3 to end)
@@ -880,29 +940,34 @@ export default function App() {
       <Backdrop />
       <CustomCursor />
       <ClickBubbles />
-      <div className="container" id="main-container">
-        {/* Header */}
-        <header className="header">
-          <nav className="nav" aria-label="Main">
-            <ul className="nav-list">
-              {['#home', '#about', '#skills', '#projects', '#contact'].map((href) => (
-                <li key={href}>
-                  <a
-                    href={href}
-                    className="nav-link"
-                    onClick={(e) => handleNavClick(e, href)}
-                  >
-                    {href.slice(1).charAt(0).toUpperCase() + href.slice(2)}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </header>
+      <nav className="dock" aria-label="Main">
+        {NAV_ITEMS.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className={`dock-item${activeSection === item.href ? ' is-active' : ''}`}
+            aria-current={activeSection === item.href ? 'page' : undefined}
+            aria-label={item.label}
+            onClick={(e) => handleNavClick(e, item.href)}
+          >
+            <span className="dock-dot" aria-hidden="true" />
+            <span className="dock-label">{item.label}</span>
+          </a>
+        ))}
+        <span
+          className="dock-progress"
+          aria-hidden="true"
+          style={{ transform: `scaleX(${navProgress})` }}
+        />
+      </nav>
 
+      <div className="container" id="main-container">
         {/* Hero */}
         <section id="home" className="hero">
           <div className="profile-container">
+            {/* Bat-signal: the emblem sits behind the portrait, so only the
+                wings spread out past the photo. */}
+            <BatEmblem className="hero-bat" />
             <div className="profile-image-wrapper">
               <img
                 src={`${GITHUB_RAW}/Images/Tech_Profile_Pic.png`}
@@ -1224,6 +1289,7 @@ export default function App() {
 
         {/* Footer */}
         <footer className="footer">
+          <BatEmblem className="footer-bat" />
           <p>&copy; 2025 Shashank Vishwakarma. All rights reserved.</p>
         </footer>
       </div>

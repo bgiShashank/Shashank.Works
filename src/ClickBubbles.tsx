@@ -11,7 +11,7 @@ interface Bubble {
   size: number;
 }
 
-const BUBBLE_HUES = ['168, 213, 255', '123, 179, 232', '74, 143, 199', '255, 255, 255'];
+const BUBBLE_HUES = ['245, 197, 24', '255, 217, 74', '201, 162, 39', '255, 255, 255'];
 const MAX_BUBBLES = 120;
 
 export default function ClickBubbles() {

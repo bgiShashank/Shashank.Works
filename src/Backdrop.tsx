@@ -11,11 +11,11 @@ type Particle = {
   delay: number;
 };
 
-// Same three motes the reference theme spawns.
+// Bat-signal motes: warm gold, signal yellow and a pale steel highlight.
 const PARTICLE_COLORS = [
-  'rgba(139, 92, 246, 0.5)',
-  'rgba(34, 211, 238, 0.4)',
-  'rgba(147, 197, 253, 0.3)',
+  'rgba(245, 197, 24, 0.5)',
+  'rgba(255, 217, 74, 0.4)',
+  'rgba(255, 235, 170, 0.3)',
 ];
 
 function makeParticles(count: number): Particle[] {
@@ -79,9 +79,9 @@ function Particles() {
 }
 
 /**
- * Fixed background layers, mirroring the reference theme: a violet/cyan glow
- * gradient, a faint 60px grid, three slow-drifting blurred orbs, a whisper of
- * noise and the rising motes. Decorative only — the canvas is
+ * Fixed background layers for the Batman theme: a bat-signal gold glow over
+ * near-black, a faint 60px grid, three slow-drifting blurred orbs, a whisper
+ * of noise and the rising motes. Decorative only — the canvas is
  * pointer-events: none and sits at z-index 0, under `.container` (z-index 1).
  */
 export default function Backdrop() {
