@@ -148,45 +148,10 @@ const portfolioData = {
       // YouTube video categories
       // isShort: true  → 9:16 vertical player (YouTube Shorts)
       // isShort: false → 16:9 horizontal player (regular YouTube)
+      // Long-form (16:9) categories lead the gallery; the Shorts (9:16) rows
+      // follow underneath them.
       videoCategories: [
         // Titles verified via YouTube oEmbed; layout verified via /shorts/ pages
-        {
-          name: 'Motion Design Edits',
-          isShort: true,
-          ids: [
-            'wpw9VAis2nM', // Motion Design Edit 1
-            'jXuaAX2L1lM', // Motion Design Edit 2
-            'niH-9TajeeI', // Motion Design Edit 3
-            'gskhVyc9m5c', // Motion Design Edit 4
-          ],
-        },
-        {
-          name: 'AI & Creative Concept Shorts',
-          isShort: true,
-          ids: [
-            'LgLTZFCo5uM', // Ai Generated 1
-            'ACYIr9roZpU', // Ai Generated 2
-            'RCLVTqISFG4', // Ai Generate 3
-            'tuqR9ex2TRM', // Ai Generated 4
-            'oDyl_mqVEKA', // Best Edit Short (Rawana V1)
-          ],
-        },
-        {
-          name: 'Promotional & Marketing Ads',
-          isShort: true,
-          // Shorts render on ONE line with 5 visible, so index 0/1 are the
-          // top-left slots and index 3/4 are the top-right slots.
-          ids: [
-            'twMd_fISfv4', // Promotional Ad - top-left
-            'wHRS0WFNP0w', // Promotional Ad - top-left
-            'KnwdLdw6jW8', // Promotional Ad 1 - 3rd slot
-            'WHOBO4K7HGU', // Product Promotional ad
-            '9qeoM2OAy9Y', // D2C Marketing - top-right
-            'MKBacqSfGB4', // D2C Marketing 2
-            '3sVzGlPYe4g', // Trading promotional 3
-          ],
-        },
-        // Gaming edits + Advance level edit sit directly above the explainers.
         {
           name: 'Gaming edits',
           isShort: false,
@@ -221,6 +186,42 @@ const portfolioData = {
             'pYqlZlDalgA', // Chellenge video edit
             'nHv1w0gQtCE', // Entertainment Youtube Video
             'cFlr5yehrZA', // Entertainment Youtube Video 2
+          ],
+        },
+        {
+          name: 'Motion Design Edits',
+          isShort: true,
+          ids: [
+            'wpw9VAis2nM', // Motion Design Edit 1
+            'jXuaAX2L1lM', // Motion Design Edit 2
+            'niH-9TajeeI', // Motion Design Edit 3
+            'gskhVyc9m5c', // Motion Design Edit 4
+          ],
+        },
+        {
+          name: 'AI & Creative Concept Shorts',
+          isShort: true,
+          ids: [
+            'LgLTZFCo5uM', // Ai Generated 1
+            'ACYIr9roZpU', // Ai Generated 2
+            'RCLVTqISFG4', // Ai Generate 3
+            'tuqR9ex2TRM', // Ai Generated 4
+            'oDyl_mqVEKA', // Best Edit Short (Rawana V1)
+          ],
+        },
+        {
+          name: 'Promotional & Marketing Ads',
+          isShort: true,
+          // Shorts render on ONE line with 5 visible, so index 0/1 are the
+          // top-left slots and index 3/4 are the top-right slots.
+          ids: [
+            'twMd_fISfv4', // Promotional Ad - top-left
+            'wHRS0WFNP0w', // Promotional Ad - top-left
+            'KnwdLdw6jW8', // Promotional Ad 1 - 3rd slot
+            'WHOBO4K7HGU', // Product Promotional ad
+            '9qeoM2OAy9Y', // D2C Marketing - top-right
+            'MKBacqSfGB4', // D2C Marketing 2
+            '3sVzGlPYe4g', // Trading promotional 3
           ],
         },
       ],
@@ -1136,11 +1137,14 @@ export default function App() {
           </section>
         )}
 
-        {/* Projects / My Work */}
+        {/* Projects (web). The editor profile has no "My Work" heading —
+            "Edited Videos" is the only title above the gallery. */}
         <section id="projects" className="section">
-          <h2 className="section-title" id="projects-title">
-            {currentPortfolio === 'web' ? 'Projects' : 'My Work'}
-          </h2>
+          {currentPortfolio === 'web' && (
+            <h2 className="section-title" id="projects-title">
+              Projects
+            </h2>
+          )}
           <div
             className={`projects-container${currentPortfolio === 'video' ? ' editor-layout' : ''}`}
             id="projects-container"
