@@ -438,10 +438,10 @@ export default function AskMe() {
           {live ? 'Live' : 'Offline'}
         </span>
       </div>
-      <p className="ask-sub">
-        Write any question below and hit send — it reaches me directly and only I can read it. My replies appear right
-        here, and you&apos;ll get a notification the moment I answer.
-      </p>
+        <p className="ask-sub">
+          Write any question below and hit send — it reaches Shashank directly and only Shashank can read it. Replies
+          appear right here. Turn on notifications to get a notification the moment I answer.
+        </p>
 
       {unreadReplies > 0 && (
         <div className="ask-new">
@@ -548,7 +548,8 @@ export default function AskMe() {
           onKeyDown={onKeyDown}
         />
         <p className="ask-privacy">
-          <span aria-hidden="true">🔒</span> Only you and I can read this message — it&apos;s end-to-end encrypted, nobody else
+          <span aria-hidden="true">🔒</span> Only you and Shashank can read this message — it&apos;s end-to-end
+          encrypted, nobody else
           can see it.
         </p>
         <div className="ask-actions">
