@@ -18,6 +18,7 @@ import {
   importPub,
   jsonToB64,
   keyPairMatches,
+  requestNotifications,
   signIn,
   isLive,
   onLinkChange,
@@ -152,6 +153,7 @@ export default function AskInbox() {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [signingIn, setSigningIn] = useState(false);
+  const [notifPerm, setNotifPerm] = useState<NotificationPermission | 'unsupported'>('default');
   const [error, setError] = useState('');
   const [unlocked, setUnlocked] = useState(false);
   const [sessions, setSessions] = useState<Record<string, SessionState>>({});
@@ -160,6 +162,10 @@ export default function AskInbox() {
   const [live, setLive] = useState(isLive());
   const [saving, setSaving] = useState(false);
   const [visible, setVisible] = useState(() => document.visibilityState !== 'hidden');
+
+  useEffect(() => {
+    setNotifPerm('Notification' in window ? Notification.permission : 'unsupported');
+  }, []);
   // Inline two-step confirmations (window.confirm is blocked in sandboxed frames).
   const [confirmClose, setConfirmClose] = useState<string | null>(null);
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
@@ -612,6 +618,19 @@ export default function AskInbox() {
           <span className="ask-live-dot" aria-hidden="true" />
           {live ? 'Live' : 'Offline'}
         </span>
+        <button
+          type="button"
+          className="inbox-btn"
+          onClick={() => void requestNotifications().then(setNotifPerm)}
+          disabled={notifPerm === 'granted' || notifPerm === 'denied' || notifPerm === 'unsupported'}
+          title="Get a notification when a new question arrives (keep this tab open)"
+        >
+          {notifPerm === 'granted'
+            ? '🔔 New msg alerts on'
+            : notifPerm === 'denied'
+              ? '🔕 Alerts blocked'
+              : '🔔 Alert me'}
+        </button>
         <button
           type="button"
           className={`inbox-btn${seenOn ? ' is-on' : ' is-off'}`}
