@@ -1753,12 +1753,12 @@ body.cursor-over-video .cursor-ring {
 }
 
 .cursor-ring--active {
-    width: 60px;
-    height: 60px;
-    border-color: rgba(255, 226, 122, 0.95);
-    background: rgba(255, 217, 74, 0.16);
-    box-shadow: 0 0 22px rgba(255, 217, 74, 0.5),
-                inset 0 0 16px rgba(255, 226, 122, 0.18);
+    width: 40px;
+    height: 40px;
+    border-color: rgba(255, 226, 122, 0.6);
+    background: rgba(255, 217, 74, 0.07);
+    box-shadow: 0 0 16px rgba(201, 162, 39, 0.35),
+                inset 0 0 12px rgba(255, 226, 122, 0.12);
 }
 
 /* ------------------------------------------------------------------
@@ -2649,5 +2649,861 @@ html {
     .bg-orb-3 {
         width: 200px;
         height: 200px;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Ask Me Anything — private two-way inbox (visitor card + #/inbox).
+   Frosted gold-on-black panel so it reads as part of the Batcave UI.
+   ------------------------------------------------------------------ */
+.ask-card {
+    max-width: 720px;
+    margin: 46px auto 0;
+    padding: 26px 26px 22px;
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(20, 20, 26, 0.72), rgba(8, 8, 12, 0.72));
+    border: 1px solid rgba(245, 197, 24, 0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    text-align: left;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ask-card--flash {
+    border-color: rgba(255, 217, 74, 0.75);
+    box-shadow: 0 0 0 1px rgba(255, 217, 74, 0.35), 0 0 44px rgba(245, 197, 24, 0.22);
+}
+
+.ask-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ask-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--light-blue);
+}
+
+.ask-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9aa0a6;
+}
+
+.ask-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6b7280;
+}
+
+.ask-live.is-live .ask-live-dot {
+    background: #4ade80;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.8);
+    animation: ask-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ask-pulse {
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.ask-sub {
+    margin: 10px 0 16px;
+    color: #b9bec7;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.ask-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 4px 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(245, 197, 24, 0.35) transparent;
+}
+
+.ask-empty {
+    margin: auto;
+    color: #7d838d;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 18px 0;
+}
+
+.ask-bubble {
+    position: relative;
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 14px;
+}
+
+/* "Delete for me" control, only visible on hover/focus in the owner inbox. */
+.ask-bubble-del {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #16161c;
+    color: #e8eaee;
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ask-bubble:hover .ask-bubble-del,
+.ask-bubble-del:focus-visible {
+    opacity: 1;
+}
+
+.ask-bubble-del:hover {
+    border-color: rgba(248, 113, 113, 0.7);
+    color: #f87171;
+}
+
+/* Second step of the delete confirmation. */
+.ask-bubble-del.is-confirming {
+    width: auto;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(248, 113, 113, 0.22);
+    border-color: rgba(248, 113, 113, 0.85);
+    color: #fca5a5;
+    font-size: 0.64rem;
+    font-weight: 700;
+    opacity: 1;
+}
+
+.inbox-btn.is-on {
+    border-color: rgba(245, 197, 24, 0.45);
+    color: #ffd94a;
+}
+
+.inbox-btn.is-off {
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #9aa0a6;
+    text-decoration: line-through;
+}
+
+.inbox-btn.is-confirming {
+    border-color: rgba(248, 113, 113, 0.75);
+    background: rgba(248, 113, 113, 0.14);
+    color: #fca5a5;
+}
+
+/* Visitor-side panel shown after the owner closes the chat. */
+.ask-closed {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(245, 197, 24, 0.06);
+    border: 1px dashed rgba(245, 197, 24, 0.35);
+}
+
+.ask-closed-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #ffd94a;
+}
+
+.ask-closed-text {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #b9bec7;
+}
+
+.ask-bubble--mine {
+    align-self: flex-end;
+    background: linear-gradient(135deg, rgba(245, 197, 24, 0.94), rgba(255, 217, 74, 0.86));
+    color: #14100a;
+    border-bottom-right-radius: 4px;
+}
+
+.ask-bubble--them {
+    align-self: flex-start;
+    background: rgba(28, 28, 34, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #e8eaee;
+    border-bottom-left-radius: 4px;
+}
+
+.ask-bubble-text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ask-bubble-time {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.64rem;
+}
+
+.ask-time {
+    opacity: 0.6;
+}
+
+.ask-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.ask-name,
+.ask-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(10, 10, 14, 0.85);
+    border: 1px solid rgba(245, 197, 24, 0.2);
+    color: #f2f3f5;
+    font: inherit;
+    font-size: 0.92rem;
+}
+
+.ask-input {
+    resize: vertical;
+    min-height: 58px;
+}
+
+.ask-who {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Once the first message is out, the name collapses into a slim banner above
+   the textarea instead of taking a whole input row. */
+.ask-as {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(245, 197, 24, 0.06);
+    border: 1px solid rgba(245, 197, 24, 0.16);
+    font-size: 0.76rem;
+    color: #9aa0aa;
+}
+
+.ask-as strong {
+    margin-left: 5px;
+    color: #f2f3f5;
+    font-weight: 600;
+}
+
+.ask-tag {
+    margin-left: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    color: #ffd94a;
+    opacity: 0.85;
+}
+
+.ask-as-edit {
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #ffd94a;
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 0.85;
+}
+
+.ask-as-edit:hover {
+    opacity: 1;
+}
+
+.ask-name.ask-name--missing {
+    border-color: rgba(248, 113, 113, 0.6);
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
+}
+
+.ask-handle {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: #8f959f;
+}
+
+.ask-handle strong {
+    color: #ffd94a;
+    font-weight: 600;
+}
+
+.ask-error {
+    margin: 0;
+    color: #f87171;
+    font-size: 0.76rem;
+}
+
+.ask-name:focus,
+.ask-input:focus {
+    outline: none;
+    border-color: rgba(255, 217, 74, 0.6);
+    box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.12);
+}
+
+/* Read receipt: a dark chip with yellow text so it stays legible on the gold
+   "mine" bubble as well as the dark "them" one. */
+.ask-seen {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #0b0b0f;
+    border: 1px solid rgba(245, 197, 24, 0.55);
+    color: #ffd94a;
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+    white-space: nowrap;
+}
+
+.ask-new {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 10px;
+    padding: 7px 8px 7px 12px;
+    border-radius: 999px;
+    background: #0b0b0f;
+    border: 1px solid rgba(245, 197, 24, 0.55);
+    color: #ffd94a;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.ask-new-btn {
+    flex: 0 0 auto;
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #f5c518, #ffd94a);
+    color: #14100a;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.ask-privacy {
+    margin: -2px 0 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    color: #8f959f;
+    font-size: 0.76rem;
+    line-height: 1.45;
+}
+
+.ask-privacy span {
+    flex: 0 0 auto;
+    filter: saturate(0.6);
+}
+
+.ask-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ask-bell {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #c9ced6;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.ask-bell:hover:not(:disabled) {
+    border-color: rgba(255, 217, 74, 0.5);
+    color: #ffd94a;
+}
+
+.ask-bell:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.ask-send {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f5c518, #ffd94a);
+    color: #14100a;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ask-send:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(245, 197, 24, 0.35);
+}
+
+.ask-send:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* Owner inbox (#/inbox) ------------------------------------------------- */
+.inbox {
+    min-height: 100vh;
+    padding: 28px clamp(14px, 4vw, 48px) 48px;
+}
+
+.inbox-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.inbox-title {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--light-blue);
+}
+
+/* Unread summary in the header: total new messages + how many people they're
+   from, so the owner can see at a glance how busy the inbox is. */
+.inbox-badge {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #0b0b0f;
+    border: 1px solid rgba(245, 197, 24, 0.55);
+    color: #ffd94a;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.inbox-body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 18px;
+    min-height: 68vh;
+}
+
+.inbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 68vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.inbox-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    text-align: left;
+    background: rgba(18, 18, 22, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.inbox-item:hover,
+.inbox-item.is-active {
+    border-color: rgba(255, 217, 74, 0.45);
+    background: rgba(28, 26, 16, 0.82);
+}
+
+.inbox-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.inbox-item-name {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #ffd94a;
+}
+
+.inbox-item-badge {
+    flex: 0 0 auto;
+    min-width: 20px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: #ffd94a;
+    color: #14100a;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+.inbox-item-preview {
+    font-size: 0.8rem;
+    color: #9aa0a6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inbox-thread-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.inbox-thread-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffd94a;
+}
+
+.inbox-signin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+}
+
+.inbox-field {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: rgba(10, 10, 14, 0.9);
+    border: 1px solid rgba(245, 197, 24, 0.22);
+    color: #f2f3f5;
+    font: inherit;
+    font-size: 0.92rem;
+}
+
+.inbox-field:focus {
+    outline: none;
+    border-color: rgba(255, 217, 74, 0.65);
+    box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.12);
+}
+
+.inbox-signout {
+    margin-left: auto;
+}
+
+.inbox-btn {
+    flex: 0 0 auto;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #c9ced6;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.inbox-btn:hover {
+    border-color: rgba(248, 113, 113, 0.6);
+    color: #f87171;
+}
+
+.inbox-btn.is-reopen:hover {
+    border-color: rgba(255, 217, 74, 0.6);
+    color: #ffd94a;
+}
+
+.inbox-away {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: auto;
+    max-width: 340px;
+    text-align: center;
+}
+
+.inbox-away-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffd94a;
+}
+
+.inbox-away-text {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: #9aa0a6;
+}
+
+.inbox-closed-note {
+    margin: 0 0 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    color: #f0a3a3;
+    font-size: 0.76rem;
+    line-height: 1.4;
+}
+
+.inbox-thread {
+    display: flex;
+    flex-direction: column;
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(14, 14, 18, 0.72);
+    border: 1px solid rgba(245, 197, 24, 0.14);
+}
+
+.inbox-messages {
+    flex: 1;
+}
+
+.inbox-hint {
+    color: #8a909a;
+    font-size: 0.78rem;
+}
+
+.inbox-lock {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 560px;
+    margin: 12vh auto 0;
+    padding: 28px;
+    border-radius: 18px;
+    background: rgba(14, 14, 18, 0.8);
+    border: 1px solid rgba(245, 197, 24, 0.18);
+}
+
+.inbox-lock-title {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--light-blue);
+}
+
+.inbox-lock-text {
+    margin: 0;
+    color: #b9bec7;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.inbox-key {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(8, 8, 12, 0.9);
+    border: 1px solid rgba(245, 197, 24, 0.2);
+    color: #e8eaee;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem;
+}
+
+.inbox-error {
+    margin: 0;
+    color: #f87171;
+    font-size: 0.85rem;
+}
+
+.inbox-tag {
+    margin-left: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    color: #989ea8;
+}
+
+.inbox-warn {
+    margin: 0 0 4px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(245, 197, 24, 0.08);
+    border: 1px solid rgba(245, 197, 24, 0.28);
+    color: #e7c96a;
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 760px) {
+    .inbox-body {
+        grid-template-columns: 1fr;
+    }
+
+    .inbox-list {
+        max-height: 220px;
+    }
+
+    .ask-card {
+        padding: 20px 16px 18px;
+    }
+
+    .ask-bubble {
+        max-width: 88%;
+    }
+}
+
+/* ---- sticky "Ask me anything" shortcut (bottom-right) ------------------- */
+.ask-fab {
+    position: fixed;
+    right: clamp(14px, 2.2vw, 28px);
+    bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 18px));
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px 9px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(245, 197, 24, 0.42);
+    background: radial-gradient(120% 150% at 0% 0%, rgba(245, 197, 24, 0.16), rgba(9, 9, 13, 0.94) 62%);
+    color: #f2f3f5;
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.28s ease, opacity 0.28s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* Invisible while the card is on screen: fades + drops away, and comes back
+   as soon as the section scrolls out of view. */
+.ask-fab--hidden {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    pointer-events: none;
+}
+
+.ask-fab:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 217, 74, 0.8);
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(245, 197, 24, 0.22);
+}
+
+.ask-fab:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+.ask-fab:focus-visible {
+    outline: 2px solid rgba(255, 217, 74, 0.75);
+    outline-offset: 3px;
+}
+
+.ask-fab-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5c518, #ffd94a);
+    color: #171208;
+    box-shadow: 0 4px 14px rgba(245, 197, 24, 0.3);
+}
+
+.ask-fab-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1.18;
+}
+
+.ask-fab-text strong {
+    font-size: 0.86rem;
+    letter-spacing: 0.01em;
+    color: #f5f6f8;
+}
+
+.ask-fab--flash {
+    border-color: rgba(255, 217, 74, 0.9);
+    animation: ask-fab-pulse 1.3s ease-in-out 2;
+}
+
+@keyframes ask-fab-pulse {
+    0%,
+    100% {
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    50% {
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), 0 0 0 7px rgba(245, 197, 24, 0.16);
+    }
+}
+
+@media (max-width: 768px) {
+    /* Lift clear of the fixed bottom navigation dock on narrow screens. */
+    .ask-fab {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
+    }
+}
+
+@media (max-width: 540px) {
+    .ask-fab {
+        padding: 8px 14px 8px 8px;
+        gap: 8px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ask-fab {
+        transition: none;
+    }
+
+    .ask-fab--flash {
+        animation: none;
+    }
+
+    .ask-fab--hidden {
+        transition: none;
     }
 }

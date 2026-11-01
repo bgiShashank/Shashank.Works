@@ -3,3 +3,5 @@ dist
 .env
 .env.local
 *.tsbuildinfo
+# Private key for the #/inbox page — stays on this device, never committed.
+OWNER-INBOX-KEY.txt

@@ -3,6 +3,8 @@ import './portfolio.css';
 import CustomCursor from './CustomCursor';
 import Backdrop from './Backdrop';
 import ClickBubbles from './ClickBubbles';
+import AskMe from './AskMe';
+import AskInbox from './AskInbox';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com/bgiShashank/Shashank.Works/main';
 
@@ -910,6 +912,15 @@ export default function App() {
 
   const data = portfolioData[currentPortfolio];
 
+  // The private owner inbox lives at #/inbox and swaps out the whole page.
+  const [routeHash, setRouteHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const onHash = () => setRouteHash(window.location.hash);
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+  if (routeHash === '#/inbox') return <AskInbox />;
+
   // Build contact links. LinkedIn belongs to the Web Developer profile only —
   // the Editor profile drops it. Fiverr and Freelancer were removed from both.
   const webContact = portfolioData.web.contact;
@@ -1289,6 +1300,10 @@ export default function App() {
               })}
             </div>
           </div>
+
+          {/* Private two-way inbox: visitors ask, Shashank replies from
+              #/inbox, and only his device holds the key that reads them. */}
+          <AskMe />
         </section>
 
         {/* Footer */}
