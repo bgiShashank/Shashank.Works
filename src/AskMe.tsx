@@ -274,6 +274,7 @@ export default function AskMe() {
         ackedRef.current = rememberAcks(identity.sid, opened.map((m) => m.id));
         pub(topicUp(identity.sid), { k: 'ack', ids: ackedRef.current });
         announce('New message from Shashank', lastText);
+        setUnreadReplies(count);
       } else {
         // Background tab: hold the receipt back until they actually return.
         unackedRef.current.push(...opened.map((m) => m.id));
@@ -299,10 +300,12 @@ export default function AskMe() {
       unackedRef.current = [];
       ackedRef.current = rememberAcks(identity.sid, ids);
       pub(topicUp(identity.sid), { k: 'ack', ids: ackedRef.current });
-      stickRef.current = true;
-      setUnreadReplies(count);
-      if (unreadTimer.current) window.clearTimeout(unreadTimer.current);
-      unreadTimer.current = window.setTimeout(() => setUnreadReplies(0), 6000);
+      stickRef.current = true;        const wasZero = count === 0;
+        setUnreadReplies(count);
+        if (wasZero && unreadTimer.current) window.clearTimeout(unreadTimer.current);
+        if (count > 0 && !unreadTimer.current) {
+          unreadTimer.current = window.setTimeout(() => setUnreadReplies(prev => prev > 0 ? prev - 1 : 0), 6000);
+        }
     };
     document.addEventListener('visibilitychange', onVisible);
 
