@@ -274,6 +274,7 @@ export default function AskMe() {
         ackedRef.current = rememberAcks(identity.sid, opened.map((m) => m.id));
         pub(topicUp(identity.sid), { k: 'ack', ids: ackedRef.current });
         announce('New message from Shashank', lastText);
+        const count = unackedRef.current.length;
         setUnreadReplies(count);
       } else {
         // Background tab: hold the receipt back until they actually return.
