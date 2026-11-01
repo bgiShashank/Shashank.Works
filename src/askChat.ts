@@ -103,8 +103,23 @@ export async function getVisitorIdentity(): Promise<VisitorIdentity> {
   return identity;
 }
 
-/** Throw away this browser's conversation and mint a brand-new one — used when
- *  the owner closed the old chat and the visitor wants to start fresh. */
+const VISITOR_TOPIC = 'sv-ask-visitor';
+
+/** The wire only starts counting a visitor after `pub(TOPIC_MESSAGES, ...)` is
+ *  called with a fresh secret. That is the exact moment we mint a new
+ *  conversation so old ones get a clean slide.
+ *
+ *  - resetVisitorIdentity(): a visitor clicks a fresh chat → the key is
+ *    deleted, so the next message is treated as brand-new (no stale
+ *    replies, no stale `env` payloads).
+ *  - Closing the chat on the owner's side is the same move: the `closed`
+ *    flag lives in `sv-ask-closed-<sid>` and the thread key, and the
+ *    visitor gets `sv-ask-thread-<sid>` cleared when the new session starts.
+ *
+ *  - Resetting the key twice in a row is a no-op (same `sid`), so the
+ *    visitor can restart freely without ever being re-connected to the
+ *    previous conversation. */
+
 export async function resetVisitorIdentity(): Promise<VisitorIdentity> {
   localStorage.removeItem(VISITOR_KEY);
   return getVisitorIdentity();
